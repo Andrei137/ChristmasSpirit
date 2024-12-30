@@ -1,5 +1,5 @@
 #include "utils.h"
-#include "Constants.h"
+#include "constants.h"
 #include "SOIL.h"
 #include <stdlib.h>
 #include <GL/freeglut_std.h>

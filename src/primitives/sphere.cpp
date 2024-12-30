@@ -99,12 +99,14 @@ namespace Sphere
         for (int patr = 0; patr < (Sphere::nr_parr + 1) * Sphere::nr_merid; ++patr)
         {
             if ((patr + 1) % (Sphere::nr_parr + 1) != 0)
+            {
                 glDrawElements(
                     GL_QUADS,
                     4,
                     GL_UNSIGNED_SHORT,
                     (GLvoid*)((2 * (Sphere::nr_parr + 1) * (Sphere::nr_merid) + 4 * patr) * sizeof(GLushort))
                 );
+            }
         }
     }
 
