@@ -1,6 +1,4 @@
-#include "Sphere.h"
-#include "Constants.h"
-#include <cmath>
+#include "primitives/sphere.h"
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include "loadShaders.h"
@@ -39,12 +37,12 @@ namespace Sphere
             {
                 float u{ u_min + parr * step_u };
                 float v{ v_min + merid * step_v };
-                float x_vf{ radius * cosf(u) * cosf(v) };
-                float y_vf{ radius * cosf(u) * sinf(v) };
-                float z_vf{ radius * sinf(u) };
+                float x{ radius * cosf(u) * cosf(v) };
+                float y{ radius * cosf(u) * sinf(v) };
+                float z{ radius * sinf(u) };
 
                 int index{ merid * (nr_parr + 1) + parr };
-                Vertices[index] = glm::vec4(x_vf, y_vf, z_vf, 1.0);
+                Vertices[index] = glm::vec4(x, y, z, 1.0);
                 Colors[index] = glm::vec3(0.1f + sinf(u), 0.1f + cosf(v), 0.1f + -1.5 * sinf(u));
                 Indices[index] = index;
 
@@ -71,6 +69,8 @@ namespace Sphere
             }
         };
 
+        glGenVertexArrays(1, &VaoId);
+        glBindVertexArray(VaoId);
         glGenBuffers(1, &VboId);
         glGenBuffers(1, &EboId);
 
@@ -87,13 +87,14 @@ namespace Sphere
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)sizeof(Vertices));
     }
 
-    void Draw(glm::mat4 view, glm::mat4 projection, Primitive mode)
+    void Draw(glm::mat4 view, glm::mat4 projection, int codCol)
     {
+        glBindVertexArray(VaoId);
         glUseProgram(ProgramId);
 
         glUniformMatrix4fv(ViewLocation, 1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(ProjLocation, 1, GL_FALSE, &projection[0][0]);
-        glUniform1i(CodColLocation, static_cast<int>(mode));
+        glUniform1i(CodColLocation, codCol);
 
         for (int patr = 0; patr < (Sphere::nr_parr + 1) * Sphere::nr_merid; ++patr)
         {
@@ -102,7 +103,8 @@ namespace Sphere
                     GL_QUADS,
                     4,
                     GL_UNSIGNED_SHORT,
-                    (GLvoid*)((2 * (Sphere::nr_parr + 1) * (Sphere::nr_merid) + 4 * patr) * sizeof(GLushort)));
+                    (GLvoid*)((2 * (Sphere::nr_parr + 1) * (Sphere::nr_merid) + 4 * patr) * sizeof(GLushort))
+                );
         }
     }
 

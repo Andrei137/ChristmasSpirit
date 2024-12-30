@@ -7,11 +7,12 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtx/transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "primitives/cone.h"
+#include "primitives/cylinder.h"
+#include "primitives/sphere.h"
 #include "loadShaders.h"
-#include "Constants.h"
-#include "DrawModes.h"
-#include "Sphere.h"
-#include "Utils.h"
+#include "constants.h"
+#include "utils.h"
 
 using namespace Utils;
 
@@ -24,6 +25,8 @@ std::stack<glm::mat4>
 /* Initialization Section */
 void CreateShaders(void)
 {
+    Cone::CreateShaders();
+    Cylinder::CreateShaders();
     Sphere::CreateShaders();
 }
 
@@ -32,10 +35,12 @@ void Initialize(void)
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     CreateShaders();
+    Cone::CreateVBO();
+    Cylinder::CreateVBO();
     Sphere::CreateVBO();
 }
 
-void LoadMatrices()
+void SetMVP()
 {
     glm::vec3 obs = {
         REF.x + dist * cos(alpha) * cos(beta),
@@ -55,12 +60,16 @@ void LoadMatrices()
 /* Cleanup Section */
 void DestroyShaders(void)
 {
+    Cone::DestroyShader();
+    Cylinder::DestroyShader();
     Sphere::DestroyShader();
 }
 
 void Cleanup(void)
 {
     DestroyShaders();
+    Cone::DestroyVBO();
+    Cylinder::DestroyVBO();
     Sphere::DestroyVBO();
 }
 
@@ -69,9 +78,24 @@ void RenderScene(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
-    LoadMatrices();
+    SetMVP();
 
-    Sphere::Draw(viewStack.top(), projection, Primitive::FULL_BLACK);
+    int timeElapsed{ static_cast<int>(glutGet(GLUT_ELAPSED_TIME)) };
+    int interval{ 3000 };
+    int shapeIdx{ (timeElapsed / interval) % 3 };
+
+    if (shapeIdx == 0)
+    {
+        Cone::Draw(viewStack.top(), projection, 0);
+    }
+    else if (shapeIdx == 1)
+    {
+        Cylinder::Draw(viewStack.top(), projection, 0);
+    }
+    else
+    {
+        Sphere::Draw(viewStack.top(), projection, 0);
+    }
 
     glutSwapBuffers();
     glFlush();

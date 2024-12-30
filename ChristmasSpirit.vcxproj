@@ -181,8 +181,10 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClCompile Include="src\imageloader.cpp" />
     <ClCompile Include="src\loadShaders.cpp" />
     <!-- ADD SRC FILES HERE -->
-    <ClCompile Include="src\Sphere.cpp" />
-    <ClCompile Include="src\Utils.cpp" />
+    <ClCompile Include="src\primitives\cone.cpp" />
+    <ClCompile Include="src\primitives\cylinder.cpp" />
+    <ClCompile Include="src\primitives\sphere.cpp" />
+    <ClCompile Include="src\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\glad\glad.h" />
@@ -483,10 +485,11 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClInclude Include="include\loadShaders.h" />
     <ClInclude Include="include\SOIL.h" />
     <!-- ADD INCLUDE FILES HERE -->
-    <ClInclude Include="include\Constants.h" />
-    <ClInclude Include="include\DrawModes.h" />
-    <ClInclude Include="include\Sphere.h" />
-    <ClInclude Include="include\Utils.h" />
+    <ClInclude Include="include\constants.h" />
+    <ClInclude Include="include\primitives\cone.h" />
+    <ClInclude Include="include\primitives\cylinder.h" />
+    <ClInclude Include="include\primitives\sphere.h" />
+    <ClInclude Include="include\utils.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\glm\CMakeLists.txt" />
