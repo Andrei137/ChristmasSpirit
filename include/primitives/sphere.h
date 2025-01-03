@@ -1,7 +1,7 @@
 #pragma once
 
 #include "glm/glm.hpp"
-#include "constants.h"
+#include "helpers/constants.h"
 
 namespace Sphere
 {

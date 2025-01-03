@@ -1,6 +1,6 @@
 #include "primitives/cone.h"
+#include "helpers/constants.h"
 #include <GL/freeglut.h>
-#include "constants.h"
 
 namespace Cone
 {
@@ -59,6 +59,7 @@ namespace Cone
     {
         glBindVertexArray(VaoId);
 
+        // Base
         glDrawElements(
             GL_TRIANGLE_FAN,
             nr_merid,
@@ -66,6 +67,7 @@ namespace Cone
             0
         );
 
+        // Lateral faces
         for (int i = 0; i < nr_merid; ++i)
         {
             glDrawElements(

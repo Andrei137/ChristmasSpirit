@@ -1,5 +1,5 @@
-#include "utils.h"
-#include "constants.h"
+#include "helpers/utils.h"
+#include "helpers/constants.h"
 #include "SOIL.h"
 #include <stdlib.h>
 #include <GL/freeglut_std.h>
@@ -37,9 +37,9 @@ namespace Utils
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void ProcessNormalKeys(unsigned char key, int, int)
+    void ProcessNormalKeys(unsigned char a_key, int, int)
     {
-        switch (key) {
+        switch (a_key) {
             case '-':
                 dist -= 5.0;
                 break;
@@ -47,15 +47,15 @@ namespace Utils
                 dist += 5.0;
                 break;
         }
-        if (key == 27)
+        if (a_key == 27)
         {
             exit(0);
         }
     }
 
-    void ProcessSpecialKeys(int key, int, int)
+    void ProcessSpecialKeys(int a_key, int, int)
     {
-        switch (key)
+        switch (a_key)
         {
             case GLUT_KEY_LEFT:
                 beta -= 0.01f;
@@ -78,12 +78,12 @@ namespace Utils
         }
     }
 
-    void ReshapeWindow(GLint newWidth, GLint newHeight)
+    void ReshapeWindow(GLint a_newWidth, GLint a_newHeight)
     {
-        glViewport(0, 0, newWidth, newHeight);
+        glViewport(0, 0, a_newWidth, a_newHeight);
 
-        winWidth = static_cast<GLfloat>(newWidth);
-        winHeight = static_cast<GLfloat>(newHeight);
+        winWidth = static_cast<GLfloat>(a_newWidth);
+        winHeight = static_cast<GLfloat>(a_newHeight);
         width = winWidth / 10;
         height = winHeight / 10;
     }

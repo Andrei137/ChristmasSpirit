@@ -1,6 +1,6 @@
 #include "primitives/cylinder.h"
+#include "helpers/constants.h"
 #include <GL/freeglut.h>
-#include "constants.h"
 
 namespace Cylinder
 {
@@ -61,6 +61,7 @@ namespace Cylinder
     {
         glBindVertexArray(VaoId);
 
+        // Superior Base
         glDrawElements(
             GL_TRIANGLE_FAN,
             nr_merid,
@@ -68,6 +69,7 @@ namespace Cylinder
             0
         );
 
+        // Inferior Base
         glDrawElements(
             GL_TRIANGLE_FAN,
             nr_merid,
@@ -75,6 +77,7 @@ namespace Cylinder
             (GLvoid*)(nr_merid * sizeof(GLushort))
         );
 
+        // Lateral Faces
         glDrawElements(
             GL_QUADS,
             4 * nr_merid,

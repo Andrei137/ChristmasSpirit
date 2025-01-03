@@ -185,13 +185,13 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClCompile Include="src\imageloader.cpp" />
     <ClCompile Include="src\loadShaders.cpp" />
     <!-- ADD SRC FILES HERE -->
-    <ClCompile Include="src\bezierCurve.cpp" />
+    <ClCompile Include="src\bezier\curve.cpp" />
+    <ClCompile Include="src\bezier\path.cpp" />
+    <ClCompile Include="src\helpers\shaders.cpp" />
+    <ClCompile Include="src\helpers\utils.cpp" />
     <ClCompile Include="src\primitives\cone.cpp" />
     <ClCompile Include="src\primitives\cylinder.cpp" />
     <ClCompile Include="src\primitives\sphere.cpp" />
-    <ClCompile Include="src\path.cpp" />
-    <ClCompile Include="src\shaders.cpp" />
-    <ClCompile Include="src\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\glad\glad.h" />
@@ -492,14 +492,14 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClInclude Include="include\loadShaders.h" />
     <ClInclude Include="include\SOIL.h" />
     <!-- ADD INCLUDE FILES HERE -->
-    <ClInclude Include="include\bezierCurve.h" />
-    <ClInclude Include="include\constants.h" />
+    <ClInclude Include="include\bezier\curve.h" />
+    <ClInclude Include="include\bezier\path.h" />
+    <ClInclude Include="include\helpers\constants.h" />
+    <ClInclude Include="include\helpers\shaders.h" />
+    <ClInclude Include="include\helpers\utils.h" />
     <ClInclude Include="include\primitives\cone.h" />
     <ClInclude Include="include\primitives\cylinder.h" />
     <ClInclude Include="include\primitives\sphere.h" />
-    <ClInclude Include="include\path.h" />
-    <ClInclude Include="include\shaders.h" />
-    <ClInclude Include="include\utils.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\glm\CMakeLists.txt" />

@@ -1,9 +1,8 @@
 // Ilie Dumitru
 
-#ifndef CS_BEZIER_CURVE_CPP
-#define CS_BEZIER_CURVE_CPP
+#pragma once
 
-#include "bezierCurve.h"
+#include "bezier/curve.h"
 #include <cassert>
 
 template<class Point>
@@ -49,5 +48,3 @@ Point BezierCurve<Point>::interpolate(const float a_time) const
 
 	return curr->at(0);
 }
-
-#endif // CS_BEZIER_CURVE_CPP

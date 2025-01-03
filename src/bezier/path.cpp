@@ -1,6 +1,6 @@
 // Ilie Dumitru
 
-#include "path.h"
+#include "bezier/path.h"
 #include <iostream>
 #include <fstream>
 
@@ -10,26 +10,6 @@ void Path::addPart(const float a_time, const BezierCurve<glm::vec3>& a_curve)
 {
 	m_times.push_back(a_time);
 	m_curves.push_back(a_curve);
-}
-
-glm::vec3 Path::interpolate(float a_time) const
-{
-	assert(m_times.size() == m_curves.size());
-	assert(! m_times.empty());
-
-	if (a_time < 0)
-		a_time = 0;
-
-	int i;
-
-	for (i = 0; i < (int)m_times.size(); ++i)
-	{
-		if (m_times[i] >= a_time)
-			return m_curves[i].interpolate(a_time / m_times[i]);
-		a_time -= m_times[i];
-	}
-
-	return m_curves.back().interpolate(1.);
 }
 
 Path Path::readFromFile(const char* a_file)
@@ -82,4 +62,24 @@ Path Path::readFromFile(const char* a_file)
 	}
 
 	return path;
+}
+
+glm::vec3 Path::interpolate(float a_time) const
+{
+	assert(m_times.size() == m_curves.size());
+	assert(! m_times.empty());
+
+	if (a_time < 0)
+		a_time = 0;
+
+	int i;
+
+	for (i = 0; i < (int)m_times.size(); ++i)
+	{
+		if (m_times[i] >= a_time)
+			return m_curves[i].interpolate(a_time / m_times[i]);
+		a_time -= m_times[i];
+	}
+
+	return m_curves.back().interpolate(1.);
 }

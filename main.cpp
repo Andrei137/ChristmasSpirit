@@ -1,28 +1,25 @@
-#include <windows.h>
 #include <stack>
 #include <stdio.h>
+#include <windows.h>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+#include "bezier/path.h"
+#include "helpers/constants.h"
+#include "helpers/shaders.h"
+#include "helpers/utils.h"
 #include "primitives/cone.h"
 #include "primitives/cylinder.h"
 #include "primitives/sphere.h"
-#include "loadShaders.h"
-#include "constants.h"
-#include "utils.h"
-#include "path.h"
-#include "shaders.h"
 
 using namespace Utils;
 
 /* Variables Section */
 double
-    time;
+    time{ 0.0f };
 Path
-    path;
+    path{ Path::readFromFile("resources/paths/demo_0.dat") };
 glm::mat4
     projection;
 std::stack<glm::mat4>
@@ -33,19 +30,18 @@ void Initialize(void)
 {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    Shaders::CreateShaders();
+    Shaders::Create();
     Cone::CreateVBO();
     Cylinder::CreateVBO();
     Sphere::CreateVBO();
-
-    time = 0;
-    path = Path::readFromFile("resources/paths/demo_0.dat");
 }
 
 void SetMVP()
 {
 	glm::vec3 obs{ path.interpolate(time) };
-	time += 0.01;
+    time += time < 8.9
+        ? 0.01
+        : -time;
 
     projection = glm::infinitePerspective(FOV, GLfloat(width) / GLfloat(height), ZNEAR);
 
@@ -61,7 +57,7 @@ void SetMVP()
 /* Cleanup Section */
 void Cleanup(void)
 {
-    Shaders::DestoryShaders();
+    Shaders::Destroy();
     Cone::DestroyVBO();
     Cylinder::DestroyVBO();
     Sphere::DestroyVBO();
@@ -75,10 +71,20 @@ void RenderScene(void)
     SetMVP();
 
     int timeElapsed{ static_cast<int>(glutGet(GLUT_ELAPSED_TIME)) };
-    int interval{ 3000 };
-    int shapeIdx{ (timeElapsed / interval) % 3 };
 
-    Shaders::LoadShader("default");
+    int shaderInterval{ 750 };
+    int shaderType{ (timeElapsed / shaderInterval) % 2 };
+    if (shaderType == 0)
+    {
+        Shaders::SetDefault();
+    }
+    else
+    {
+        Shaders::SetBlack();
+    }
+
+    int shapeInterval{ 3000 };
+    int shapeIdx{ (timeElapsed / shapeInterval) % 3 };
     if (shapeIdx == 0)
     {
         Cone::Draw();
