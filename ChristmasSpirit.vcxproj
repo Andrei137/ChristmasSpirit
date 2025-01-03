@@ -88,6 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -114,6 +115,7 @@ cd "$(ProjectDir)/lib/x32/SOIL" &amp; xcopy /c /y *.dll *.lib</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,6 +136,7 @@ xcopy /y /d "$(ProjectDir)lib\x32\SOIL\*.dll" "$(OutDir)" &amp;</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -160,6 +163,7 @@ cd "$(ProjectDir)/lib/x64/SOIL" &amp; xcopy /c /y *.dll *.lib</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -181,12 +185,13 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClCompile Include="src\imageloader.cpp" />
     <ClCompile Include="src\loadShaders.cpp" />
     <!-- ADD SRC FILES HERE -->
+    <ClCompile Include="src\bezierCurve.cpp" />
     <ClCompile Include="src\primitives\cone.cpp" />
     <ClCompile Include="src\primitives\cylinder.cpp" />
     <ClCompile Include="src\primitives\sphere.cpp" />
-    <ClCompile Include="src\utils.cpp" />
-    <ClCompile Include="src\bezierCurve.cpp" />
     <ClCompile Include="src\path.cpp" />
+    <ClCompile Include="src\shaders.cpp" />
+    <ClCompile Include="src\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\glad\glad.h" />
@@ -487,13 +492,14 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClInclude Include="include\loadShaders.h" />
     <ClInclude Include="include\SOIL.h" />
     <!-- ADD INCLUDE FILES HERE -->
+    <ClInclude Include="include\bezierCurve.h" />
     <ClInclude Include="include\constants.h" />
     <ClInclude Include="include\primitives\cone.h" />
     <ClInclude Include="include\primitives\cylinder.h" />
     <ClInclude Include="include\primitives\sphere.h" />
-    <ClInclude Include="include\utils.h" />
-    <ClInclude Include="include\bezierCurve.h" />
     <ClInclude Include="include\path.h" />
+    <ClInclude Include="include\shaders.h" />
+    <ClInclude Include="include\utils.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\glm\CMakeLists.txt" />

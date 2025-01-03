@@ -14,57 +14,37 @@
 #include "constants.h"
 #include "utils.h"
 #include "path.h"
+#include "shaders.h"
 
 using namespace Utils;
 
 /* Variables Section */
+double
+    time;
+Path
+    path;
 glm::mat4
     projection;
 std::stack<glm::mat4>
     viewStack;
 
 /* Initialization Section */
-void CreateShaders(void)
-{
-    Cone::CreateShaders();
-    Cylinder::CreateShaders();
-    Sphere::CreateShaders();
-}
-
 void Initialize(void)
 {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    CreateShaders();
+    Shaders::CreateShaders();
     Cone::CreateVBO();
     Cylinder::CreateVBO();
     Sphere::CreateVBO();
+
+    time = 0;
+    path = Path::readFromFile("resources/paths/demo_0.dat");
 }
 
 void SetMVP()
 {
-	static Path path = Path::readFromFile("resources/paths/demo_0.dat");
-	static double time = 0.;
-
-	if (path.m_times.empty())
-	{
-		BezierCurve<glm::vec3> b0, b1;
-		b0.addPoint(glm::vec3(300, 0, 0));
-		b0.addPoint(glm::vec3(0, 300, 0));
-		b1.addPoint(glm::vec3(0, 300, 0));
-		b1.addPoint(glm::vec3(-100, 400, 0));
-		b1.addPoint(glm::vec3(0, 300, 300));
-		path.addPart(5, b0);
-		path.addPart(4, b1);
-	}
-
-//    glm::vec3 obs = {
-//        REF.x + dist * cos(alpha) * cos(beta),
-//        REF.y + dist * cos(alpha) * sin(beta),
-//        REF.z + dist * sin(alpha)
-//    };
-
-	glm::vec3 obs = path.interpolate(time);
+	glm::vec3 obs{ path.interpolate(time) };
 	time += 0.01;
 
     projection = glm::infinitePerspective(FOV, GLfloat(width) / GLfloat(height), ZNEAR);
@@ -74,19 +54,14 @@ void SetMVP()
         viewStack.pop();
     }
     viewStack.push(glm::lookAt(obs, REF, VERT));
+
+    Shaders::SetMVP(viewStack.top(), projection);
 }
 
 /* Cleanup Section */
-void DestroyShaders(void)
-{
-    Cone::DestroyShader();
-    Cylinder::DestroyShader();
-    Sphere::DestroyShader();
-}
-
 void Cleanup(void)
 {
-    DestroyShaders();
+    Shaders::DestoryShaders();
     Cone::DestroyVBO();
     Cylinder::DestroyVBO();
     Sphere::DestroyVBO();
@@ -103,17 +78,18 @@ void RenderScene(void)
     int interval{ 3000 };
     int shapeIdx{ (timeElapsed / interval) % 3 };
 
+    Shaders::LoadShader("default");
     if (shapeIdx == 0)
     {
-        Cone::Draw(viewStack.top(), projection, 0);
+        Cone::Draw();
     }
     else if (shapeIdx == 1)
     {
-        Cylinder::Draw(viewStack.top(), projection, 0);
+        Cylinder::Draw();
     }
     else
     {
-        Sphere::Draw(viewStack.top(), projection, 0);
+        Sphere::Draw();
     }
 
     glutSwapBuffers();

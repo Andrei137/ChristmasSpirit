@@ -8,11 +8,7 @@ namespace Cylinder
     extern GLuint
         VaoId,
         VboId,
-        EboId,
-        ProgramId,
-        ViewLocation,
-        ProjLocation,
-        CodColLocation;
+        EboId;
 
     const int
         nr_merid{ 25 },
@@ -20,8 +16,6 @@ namespace Cylinder
         height{ 100 };
 
     void CreateVBO();
-    void CreateShaders();
-    void Draw(glm::mat4, glm::mat4, int);
-    void DestroyShader();
+    void Draw();
     void DestroyVBO();
 }

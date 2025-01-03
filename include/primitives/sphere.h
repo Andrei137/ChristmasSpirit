@@ -8,11 +8,7 @@ namespace Sphere
     extern GLuint
         VaoId,
         VboId,
-        EboId,
-        ProgramId,
-        ViewLocation,
-        ProjLocation,
-        CodColLocation;
+        EboId;
 
     const int
         nr_parr{ 10 },
@@ -28,8 +24,6 @@ namespace Sphere
         step_v{ (v_max - v_min) / nr_merid };
 
     void CreateVBO();
-    void CreateShaders();
-    void Draw(glm::mat4, glm::mat4, int);
-    void DestroyShader();
+    void Draw();
     void DestroyVBO();
 }

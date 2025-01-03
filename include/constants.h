@@ -19,6 +19,5 @@ const float
 
 const std::string
     TITLE{ "ChristmasSpirit" },
-    SHADERS_PATH{ "resources/shaders/" },
-    PRIMITIVES_SHADER{ SHADERS_PATH + "primitives" };
-
+    SHADERS_PATH{ "resources/shaders" },
+    PRIMITIVES_SHADER{ SHADERS_PATH + "/primitives" };

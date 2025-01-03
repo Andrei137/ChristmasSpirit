@@ -1,6 +1,5 @@
 #include "primitives/cone.h"
 #include <GL/freeglut.h>
-#include "loadShaders.h"
 #include "constants.h"
 
 namespace Cone
@@ -8,22 +7,7 @@ namespace Cone
     GLuint
         VaoId,
         VboId,
-        EboId,
-        ProgramId,
-        ViewLocation,
-        ProjLocation,
-        CodColLocation;
-
-    void CreateShaders()
-    {
-        ProgramId = LoadShaders(
-            (PRIMITIVES_SHADER + ".vert").c_str(),
-            (PRIMITIVES_SHADER + ".frag").c_str()
-        );
-        ViewLocation = glGetUniformLocation(ProgramId, "viewShader");
-        ProjLocation = glGetUniformLocation(ProgramId, "projectionShader");
-        CodColLocation = glGetUniformLocation(ProgramId, "codCol");
-    }
+        EboId;
 
     void CreateVBO(void)
     {
@@ -71,14 +55,9 @@ namespace Cone
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)sizeof(Vertices));
     }
 
-    void Draw(glm::mat4 view, glm::mat4 projection, int codCol)
+    void Draw()
     {
         glBindVertexArray(VaoId);
-        glUseProgram(ProgramId);
-
-        glUniformMatrix4fv(ViewLocation, 1, GL_FALSE, &view[0][0]);
-        glUniformMatrix4fv(ProjLocation, 1, GL_FALSE, &projection[0][0]);
-        glUniform1i(CodColLocation, codCol);
 
         glDrawElements(
             GL_TRIANGLE_FAN,
@@ -86,6 +65,7 @@ namespace Cone
             GL_UNSIGNED_SHORT,
             0
         );
+
         for (int i = 0; i < nr_merid; ++i)
         {
             glDrawElements(
@@ -95,11 +75,6 @@ namespace Cone
                 (void*)(sizeof(GLushort) * (nr_merid + 3 * i))
             );
         }
-    }
-
-    void DestroyShader()
-    {
-        glDeleteProgram(ProgramId);
     }
 
     void DestroyVBO()

@@ -1,29 +1,12 @@
 #include "primitives/sphere.h"
-#include <GL/glew.h>
 #include <GL/freeglut.h>
-#include "loadShaders.h"
 
 namespace Sphere
 {
     GLuint
         VaoId,
         VboId,
-        EboId,
-        ProgramId,
-        ViewLocation,
-        ProjLocation,
-        CodColLocation;
-
-    void CreateShaders()
-    {
-        ProgramId = LoadShaders(
-            (PRIMITIVES_SHADER + ".vert").c_str(),
-            (PRIMITIVES_SHADER + ".frag").c_str()
-        );
-        ViewLocation = glGetUniformLocation(ProgramId, "viewShader");
-        ProjLocation = glGetUniformLocation(ProgramId, "projectionShader");
-        CodColLocation = glGetUniformLocation(ProgramId, "codCol");
-    }
+        EboId;
 
     void CreateVBO(void)
     {
@@ -51,7 +34,7 @@ namespace Sphere
 
                 if ((parr + 1) % (nr_parr + 1) != 0)
                 {
-                    int AUX{ 2 * (nr_parr + 1) * nr_merid };
+                    int aux{ 2 * (nr_parr + 1) * nr_merid };
                     int index1{ index };
                     int index2{ index + (nr_parr + 1) };
                     int index3{ index2 + 1 };
@@ -61,10 +44,10 @@ namespace Sphere
                         index2 = index2 % (nr_parr + 1);
                         index3 = index3 % (nr_parr + 1);
                     }
-                    Indices[AUX + 4 * index] = index1;
-                    Indices[AUX + 4 * index + 1] = index2;
-                    Indices[AUX + 4 * index + 2] = index3;
-                    Indices[AUX + 4 * index + 3] = index4;
+                    Indices[aux + 4 * index] = index1;
+                    Indices[aux + 4 * index + 1] = index2;
+                    Indices[aux + 4 * index + 2] = index3;
+                    Indices[aux + 4 * index + 3] = index4;
                 }
             }
         };
@@ -87,14 +70,9 @@ namespace Sphere
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)sizeof(Vertices));
     }
 
-    void Draw(glm::mat4 view, glm::mat4 projection, int codCol)
+    void Draw()
     {
         glBindVertexArray(VaoId);
-        glUseProgram(ProgramId);
-
-        glUniformMatrix4fv(ViewLocation, 1, GL_FALSE, &view[0][0]);
-        glUniformMatrix4fv(ProjLocation, 1, GL_FALSE, &projection[0][0]);
-        glUniform1i(CodColLocation, codCol);
 
         for (int patr = 0; patr < (Sphere::nr_parr + 1) * Sphere::nr_merid; ++patr)
         {
@@ -108,11 +86,6 @@ namespace Sphere
                 );
             }
         }
-    }
-
-    void DestroyShader()
-    {
-        glDeleteProgram(ProgramId);
     }
 
     void DestroyVBO()
