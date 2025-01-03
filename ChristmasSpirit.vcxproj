@@ -185,6 +185,8 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClCompile Include="src\primitives\cylinder.cpp" />
     <ClCompile Include="src\primitives\sphere.cpp" />
     <ClCompile Include="src\utils.cpp" />
+    <ClCompile Include="src\bezierCurve.cpp" />
+    <ClCompile Include="src\path.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\glad\glad.h" />
@@ -490,6 +492,8 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClInclude Include="include\primitives\cylinder.h" />
     <ClInclude Include="include\primitives\sphere.h" />
     <ClInclude Include="include\utils.h" />
+    <ClInclude Include="include\bezierCurve.h" />
+    <ClInclude Include="include\path.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\glm\CMakeLists.txt" />

@@ -13,6 +13,7 @@
 #include "loadShaders.h"
 #include "constants.h"
 #include "utils.h"
+#include "path.h"
 
 using namespace Utils;
 
@@ -42,11 +43,29 @@ void Initialize(void)
 
 void SetMVP()
 {
-    glm::vec3 obs = {
-        REF.x + dist * cos(alpha) * cos(beta),
-        REF.y + dist * cos(alpha) * sin(beta),
-        REF.z + dist * sin(alpha)
-    };
+	static Path path = Path::readFromFile("resources/paths/demo_0.dat");
+	static double time = 0.;
+
+	if (path.m_times.empty())
+	{
+		BezierCurve<glm::vec3> b0, b1;
+		b0.addPoint(glm::vec3(300, 0, 0));
+		b0.addPoint(glm::vec3(0, 300, 0));
+		b1.addPoint(glm::vec3(0, 300, 0));
+		b1.addPoint(glm::vec3(-100, 400, 0));
+		b1.addPoint(glm::vec3(0, 300, 300));
+		path.addPart(5, b0);
+		path.addPart(4, b1);
+	}
+
+//    glm::vec3 obs = {
+//        REF.x + dist * cos(alpha) * cos(beta),
+//        REF.y + dist * cos(alpha) * sin(beta),
+//        REF.z + dist * sin(alpha)
+//    };
+
+	glm::vec3 obs = path.interpolate(time);
+	time += 0.01;
 
     projection = glm::infinitePerspective(FOV, GLfloat(width) / GLfloat(height), ZNEAR);
 
@@ -105,7 +124,7 @@ int main(int argc, char* argv[])
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
-    glutInitWindowSize(winWidth, winHeight);
+    glutInitWindowSize(static_cast<int>(winWidth), static_cast<int>(winHeight));
     glutInitWindowPosition(POSX, POSY);
     glutCreateWindow(TITLE.c_str());
 

@@ -82,8 +82,8 @@ namespace Utils
     {
         glViewport(0, 0, newWidth, newHeight);
 
-        winWidth = newWidth;
-        winHeight = newHeight;
+        winWidth = static_cast<GLfloat>(newWidth);
+        winHeight = static_cast<GLfloat>(newHeight);
         width = winWidth / 10;
         height = winHeight / 10;
     }
