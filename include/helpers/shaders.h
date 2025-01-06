@@ -23,4 +23,5 @@ namespace Shaders
     // API to change the current shader
     void SetDefault();
     void SetBlack();
+    void SetMeshDefault();
 }

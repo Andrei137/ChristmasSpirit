@@ -73,4 +73,9 @@ namespace Shaders
     {
         LoadShader("black");
     }
+
+    void SetMeshDefault()
+    {
+    	LoadShader("mesh_default");
+    }
 }

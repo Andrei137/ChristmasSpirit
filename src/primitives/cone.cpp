@@ -68,15 +68,12 @@ namespace Cone
         );
 
         // Lateral faces
-        for (int i = 0; i < nr_merid; ++i)
-        {
-            glDrawElements(
-                GL_TRIANGLES,
-                3,
-                GL_UNSIGNED_SHORT,
-                (void*)(sizeof(GLushort) * (nr_merid + 3 * i))
-            );
-        }
+		glDrawElements(
+			GL_TRIANGLES,
+			3 * nr_merid,
+			GL_UNSIGNED_SHORT,
+			(void*)(sizeof(GLushort) * (nr_merid))
+		);
     }
 
     void DestroyVBO()
