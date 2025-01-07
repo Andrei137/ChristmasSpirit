@@ -9,5 +9,6 @@ uniform sampler2D txt;
 
 void main(void)
 {
-	out_Color = texture(txt, uv);
+	// out_Color = texture(txt, uv);
+	out_Color = vec4(0.f, 0.f, 0.f, 1.f);
 }

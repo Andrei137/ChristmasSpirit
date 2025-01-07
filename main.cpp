@@ -12,6 +12,7 @@
 #include "primitives/cone.h"
 #include "primitives/cylinder.h"
 #include "primitives/sphere.h"
+#include "mesh.h"
 
 using namespace Utils;
 
@@ -87,16 +88,22 @@ void RenderScene(void)
     int shapeIdx{ (timeElapsed / shapeInterval) % 3 };
     if (shapeIdx == 0)
     {
-        Cone::Draw();
+        //Cone::Draw();
     }
     else if (shapeIdx == 1)
     {
-        Cylinder::Draw();
+        //Cylinder::Draw();
     }
     else
     {
-        Sphere::Draw();
+        //Sphere::Draw();
     }
+
+    static Mesh flash;
+    if (flash.m_vertices.empty())
+		flash.loadMesh("resources/meshes/flashlight_0.obj");
+	Shaders::SetMeshDefault();
+	flash.draw();
 
     glutSwapBuffers();
     glFlush();

@@ -138,15 +138,17 @@ void Mesh::loadMesh(const char* a_file)
 					--b;
 					while (reader >> c)
 					{
+						--c;
                         m_vertices.push_back(temp_vertices[a]);
                         m_vertices.push_back(temp_vertices[b]);
-                        m_vertices.push_back(temp_vertices[c - 1]);
+                        m_vertices.push_back(temp_vertices[c]);
                         m_normals.push_back(glm::vec3(0.f)); // Dummy normal for alignment
                         m_normals.push_back(glm::vec3(0.f)); // Dummy normal for alignment
                         m_normals.push_back(glm::vec3(0.f)); // Dummy normal for alignment
                         m_uvs.push_back(glm::vec2(0.f)); // Dummy uv for alignment
                         m_uvs.push_back(glm::vec2(0.f)); // Dummy uv for alignment
                         m_uvs.push_back(glm::vec2(0.f)); // Dummy uv for alignment
+                        b=c;
 					}
 				}
 				else if (cntSlashes == cntSpaces)
@@ -166,15 +168,19 @@ void Mesh::loadMesh(const char* a_file)
 					--tb;
 					while(reader >> vc >> tc)
 					{
+						--vc;
+						--tc;
 						m_vertices.push_back(temp_vertices[va]);
                         m_vertices.push_back(temp_vertices[vb]);
-                        m_vertices.push_back(temp_vertices[vc - 1]);
+                        m_vertices.push_back(temp_vertices[vc]);
                         m_normals.push_back(glm::vec3(0.f)); // Dummy normal for alignment
                         m_normals.push_back(glm::vec3(0.f)); // Dummy normal for alignment
                         m_normals.push_back(glm::vec3(0.f)); // Dummy normal for alignment
                         m_uvs.push_back(temp_uvs[ta]);
                         m_uvs.push_back(temp_uvs[tb]);
-                        m_uvs.push_back(temp_uvs[tc - 1]);
+                        m_uvs.push_back(temp_uvs[tc]);
+                        vb=vc;
+                        tb=tc;
 					}
 				}
 				else if (cntSlashes == cntSpaces * 2)
@@ -203,15 +209,19 @@ void Mesh::loadMesh(const char* a_file)
 						--nb;
 						while(reader >> vc >> nc)
 						{
+							--vc;
+							--nc;
 							m_vertices.push_back(temp_vertices[va]);
 							m_vertices.push_back(temp_vertices[vb]);
-							m_vertices.push_back(temp_vertices[vc - 1]);
+							m_vertices.push_back(temp_vertices[vc]);
 							m_normals.push_back(temp_normals[na]);
 							m_normals.push_back(temp_normals[nb]);
-							m_normals.push_back(temp_normals[nc - 1]);
+							m_normals.push_back(temp_normals[nc]);
 							m_uvs.push_back(glm::vec2(0.f)); // Dummy uv for alignment
 							m_uvs.push_back(glm::vec2(0.f)); // Dummy uv for alignment
 							m_uvs.push_back(glm::vec2(0.f)); // Dummy uv for alignment
+							nb=nc;
+							vb=vc;
 						}
 					}
 					else
@@ -231,15 +241,21 @@ void Mesh::loadMesh(const char* a_file)
 						--nb;
 						while(reader >> vc >> tc >> nc)
 						{
+							--vc;
+							--tc;
+							--nc;
 							m_vertices.push_back(temp_vertices[va]);
 							m_vertices.push_back(temp_vertices[vb]);
-							m_vertices.push_back(temp_vertices[vc - 1]);
+							m_vertices.push_back(temp_vertices[vc]);
 							m_normals.push_back(temp_normals[na]);
 							m_normals.push_back(temp_normals[nb]);
-							m_normals.push_back(temp_normals[nc - 1]);
+							m_normals.push_back(temp_normals[nc]);
 							m_uvs.push_back(temp_uvs[ta]);
 							m_uvs.push_back(temp_uvs[tb]);
-							m_uvs.push_back(temp_uvs[tc - 1]);
+							m_uvs.push_back(temp_uvs[tc]);
+							vb=vc;
+							tb=tc;
+							nb=nc;
 						}
 					}
 				}
