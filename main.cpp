@@ -75,7 +75,7 @@ void SetMVP(const std::string& a_path_name)
         viewStack.pop();
     }
     viewStack.push(glm::lookAt(pathMap[a_path_name].interpolate(pathTime), REF, VERT));
-    pathTime += pathTime < 8.9 ? 0.01 : -pathTime;
+    pathTime += pathTime < 15 ? 0.01 : -pathTime;
 
     Shaders::SetMVP(
         viewStack.top(),
@@ -139,8 +139,8 @@ void DemoSnow()
 void DemoMesh()
 {
     SetMVP("demo_1");
-    Shaders::SetMeshDefault("doughnut");
-    meshMap["flashlight"].draw();
+    Shaders::SetMeshDefault("gift_0");
+    meshMap["gift_2"].draw();
 }
 
 /* Main Section */
