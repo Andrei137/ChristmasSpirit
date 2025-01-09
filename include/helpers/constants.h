@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <string>
 #include <GL/glew.h>
 #include "glm/glm.hpp"
@@ -15,8 +16,12 @@ const glm::vec3
 const float
     PI{ 3.141592f },
     ZNEAR{ 1 },
-    FOV{ 30 };
+    FOV{ 30 },
+    SQRT3{ static_cast<float>(sqrt(3)) };
 
 const std::string
     TITLE{ "ChristmasSpirit" },
-    SHADERS_PATH{ "resources/shaders" };
+    MESHES_PATH{ "resources/meshes" },
+    BEZIER_PATH{ "resources/paths" },
+    SHADERS_PATH{ "resources/shaders" },
+    TEXTURES_PATH{ "resources/textures" };

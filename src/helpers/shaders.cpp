@@ -1,10 +1,11 @@
 #include "helpers/shaders.h"
+#include "helpers/textures.h"
 #include "helpers/constants.h"
+#include "helpers/utils.h"
 #include "loadShaders.h"
 #include <filesystem>
 #include <iostream>
 #include <GL/freeglut.h>
-#include <cassert>
 
 namespace fs = std::filesystem;
 
@@ -25,7 +26,7 @@ namespace Shaders
             {
                 assert(shader_dir.is_directory());
                 std::string name{ shader_dir.path().filename().string() };
-                std::string path{ SHADERS_PATH + "/" + name + "/shader" };
+                std::string path{ Utils::FILE_PATH("shader", name) };
                 shaders[name] = LoadShaders(
                     (path + ".vert").c_str(),
                     (path + ".frag").c_str()
@@ -38,23 +39,6 @@ namespace Shaders
         }
     }
 
-    void SetMVP(glm::mat4 a_view, glm::mat4 a_proj)
-    {
-        view = a_view;
-        proj = a_proj;
-    }
-
-    void LoadShader(std::string a_name)
-    {
-        GLuint shaderID{ shaders[a_name] };
-        GLint viewLocation{ glGetUniformLocation(shaderID, "viewShader") };
-        GLint projLocation{ glGetUniformLocation(shaderID, "projectionShader") };
-
-        glUseProgram(shaderID);
-        glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
-        glUniformMatrix4fv(projLocation, 1, GL_FALSE, &proj[0][0]);
-    }
-
     void Destroy()
     {
         for (const auto& shader : shaders)
@@ -63,19 +47,49 @@ namespace Shaders
         }
     }
 
+    void SetMVP(glm::mat4 a_view, glm::mat4 a_proj)
+    {
+        if (a_view != glm::mat4(0))
+        {
+            view = a_view;
+        }
+        if (a_proj != glm::mat4(0))
+        {
+            proj = a_proj;
+        }
+    }
+
+    void SetShader(std::string a_name, glm::mat4 a_custom_view = glm::mat4(0))
+    {
+        GLuint shaderID{ shaders[a_name] };
+        glm::mat4 viewToUse{ a_custom_view != glm::mat4(0) ? a_custom_view : view };
+
+        glUseProgram(shaderID);
+        glUniformMatrix4fv(glGetUniformLocation(shaderID, "projectionShader"), 1, GL_FALSE, &proj[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(shaderID, "viewShader"), 1, GL_FALSE, &viewToUse[0][0]);
+    }
+
     // API to change the current shader
     void SetDefault()
     {
-        LoadShader("default");
+        SetShader("default");
     }
 
     void SetBlack()
     {
-        LoadShader("black");
+        SetShader("black");
     }
 
-    void SetMeshDefault()
+    void SetMeshDefault(std::string a_texture_name)
     {
-    	LoadShader("mesh_default");
+    	SetShader("mesh_default");
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, Textures::Get(a_texture_name));
+        glUniform1i(glGetUniformLocation(shaders["mesh_default"], "textureShader"), 0);
+    }
+
+    void SetCircle(glm::mat4 a_view)
+    {
+        SetShader("circle", a_view);
     }
 }

@@ -35,20 +35,20 @@ void Mesh::createGLids()
 {
 	glGenVertexArrays(1, &m_VaoId);
 	glBindVertexArray(m_VaoId);
+
 	glGenBuffers(1, &m_VboId);
-
 	glBindBuffer(GL_ARRAY_BUFFER, m_VboId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * m_vertices.size() * 2 + sizeof(glm::vec2) * m_uvs.size(), NULL, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * m_vertices.size(), &m_vertices[0]);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * m_vertices.size(), sizeof(glm::vec3) * m_normals.size(), &m_normals[0]);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * (m_vertices.size() + m_normals.size()), sizeof(glm::vec2) * m_uvs.size(), &m_uvs[0]);
+	glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(glm::vec3) + m_normals.size() * sizeof(glm::vec3) + m_uvs.size() * sizeof(glm::vec2), NULL, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, m_vertices.size() * sizeof(glm::vec3), &m_vertices[0]);
+    glBufferSubData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(glm::vec3), m_normals.size() * sizeof(glm::vec3), &m_normals[0]);
+    glBufferSubData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(glm::vec3) + m_normals.size() * sizeof(glm::vec3), m_uvs.size() * sizeof(glm::vec2), &m_uvs[0]);
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) * m_vertices.size(), (GLvoid*)0);
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) * m_vertices.size() * 2, (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(m_vertices.size() * sizeof(glm::vec3)));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(m_vertices.size() * sizeof(glm::vec3) + m_normals.size() * sizeof(glm::vec3)));
 }
 
 void Mesh::loadMesh(const char* a_file)

@@ -7,15 +7,15 @@
 namespace Utils
 {
     GLfloat
-        winWidth{ 1280.f },
-        winHeight{ 720.f };
+        winWidth{ 1280.0f },
+        winHeight{ 720.0f };
 
     float
-        dist{ 300.0f },
-        alpha{ 0.0f },
-        beta{ 0.0f },
-        width{ 800.f },
-        height{ 600.f };
+        width{ 800.0f },
+        height{ 600.0f };
+
+    int
+        demoIdx{ 0 };
 
     void LoadTexture(const char* a_photoPath, GLuint& a_texture)
     {
@@ -39,13 +39,8 @@ namespace Utils
 
     void ProcessNormalKeys(unsigned char a_key, int, int)
     {
-        switch (a_key) {
-            case '-':
-                dist -= 5.0;
-                break;
-            case '+':
-                dist += 5.0;
-                break;
+        if (a_key >= '1' && a_key <= '9') {
+            demoIdx = (a_key - '0') - 1;
         }
         if (a_key == 27)
         {
@@ -58,22 +53,12 @@ namespace Utils
         switch (a_key)
         {
             case GLUT_KEY_LEFT:
-                beta -= 0.01f;
+                --demoIdx;
+                if (demoIdx < 0) demoIdx = 2;
                 break;
             case GLUT_KEY_RIGHT:
-                beta += 0.01f;
-                break;
-            case GLUT_KEY_UP:
-                if (abs(alpha - PI / 2) >= 0.05)
-                {
-                    alpha += 0.01f;
-                }
-                break;
-            case GLUT_KEY_DOWN:
-                if (abs(alpha + PI / 2) >= 0.05)
-                {
-                    alpha -= 0.01f;
-                }
+                ++demoIdx;
+                if (demoIdx > 2) demoIdx = 0;
                 break;
         }
     }
@@ -86,5 +71,36 @@ namespace Utils
         winHeight = static_cast<GLfloat>(a_newHeight);
         width = winWidth / 10;
         height = winHeight / 10;
+    }
+
+    std::string DropFileExtension(const std::string& a_file)
+    {
+        return a_file.substr(0, a_file.find_last_of('.'));
+    }
+
+    std::string FilePath(const std::string& a_type, const std::string& a_name)
+    {
+        std::string folder{}, extension{};
+        if (a_type == "mesh")
+        {
+            folder = MESHES_PATH;
+            extension = ".obj";
+        }
+        else if (a_type == "path")
+        {
+            folder = BEZIER_PATH;
+            extension = ".dat";
+        }
+        else if (a_type == "shader")
+        {
+            folder = SHADERS_PATH;
+            extension = "/shader";
+        }
+        else if (a_type == "texture")
+        {
+            folder = TEXTURES_PATH;
+            extension = ".png";
+        }
+        return folder + "/" + a_name + extension;
     }
 }

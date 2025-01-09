@@ -8,5 +8,5 @@ uniform int codCol;
 
 void main(void)
 {
-    out_Color = vec3(0.0, 0.0, 0.0);
+    out_Color = vec3(0.0f, 0.0f, 0.0f);
 }

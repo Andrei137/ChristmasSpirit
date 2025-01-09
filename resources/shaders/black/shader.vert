@@ -12,5 +12,5 @@ uniform mat4 projectionShader;
 void main(void)
 {
     gl_Position = projectionShader * viewShader * in_Position;
-    ex_Color=in_Color;
+    ex_Color = in_Color;
 }

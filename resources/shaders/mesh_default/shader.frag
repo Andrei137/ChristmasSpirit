@@ -5,10 +5,9 @@ in vec2 uv;
 
 out vec4 out_Color;
 
-uniform sampler2D txt;
+uniform sampler2D textureShader;
 
 void main(void)
 {
-	// out_Color = texture(txt, uv);
-	out_Color = vec4(0.f, 0.f, 0.f, 1.f);
+	out_Color = texture(textureShader, uv);
 }

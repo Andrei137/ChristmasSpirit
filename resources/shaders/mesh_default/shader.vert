@@ -13,7 +13,7 @@ uniform mat4 projectionShader;
 
 void main(void)
 {
-    gl_Position = projectionShader * viewShader * vec4(in_Position, 1.f);
+    gl_Position = projectionShader * viewShader * vec4(in_Position, 1.0f);
 	ex_normal = in_Normal;
     uv = in_Uv;
 }
