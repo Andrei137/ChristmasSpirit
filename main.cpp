@@ -139,8 +139,8 @@ void DemoSnow()
 void DemoMesh()
 {
     SetMVP("demo_1");
-    Shaders::SetMeshDefault("gift_0");
-    meshMap["gift_2"].draw();
+    Shaders::SetMeshDefault("santa");
+    meshMap["santa"].draw();
 }
 
 /* Main Section */
@@ -163,7 +163,7 @@ int main(int argc, char* argv[])
     glutInitWindowSize(static_cast<int>(winWidth), static_cast<int>(winHeight));
     glutInitWindowPosition(POSX, POSY);
     glutCreateWindow(TITLE.c_str());
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
     glewInit();
     Initialize();
     glutReshapeFunc(ReshapeWindow);
