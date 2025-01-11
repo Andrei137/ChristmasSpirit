@@ -19,6 +19,7 @@
 #include "primitives/cylinder.h"
 #include "primitives/sphere.h"
 #include "mesh.h"
+#include "scene.h"
 
 namespace fs = std::filesystem;
 using namespace Utils;
@@ -30,6 +31,7 @@ std::unordered_map<std::string, Mesh>
     meshMap;
 std::unordered_map<std::string, Path>
     pathMap;
+Scene scene;
 
 /* Initialization Section */
 void LoadResources()
@@ -50,6 +52,7 @@ void LoadResources()
         }
         Shaders::Create();
         Textures::Create();
+		scene.loadScene("scene.txt");
     }
     catch (const fs::filesystem_error& e)
     {
@@ -139,8 +142,8 @@ void DemoSnow()
 void DemoMesh()
 {
     SetMVP("demo_1");
-    Shaders::SetMeshDefault("santa");
-    meshMap["santa"].draw();
+//    Shaders::SetMeshDefault("santa");
+//    meshMap["santa"].draw();
 }
 
 /* Main Section */
@@ -149,8 +152,16 @@ void RenderScene()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-    std::vector<std::function<void()>> demos = { DemoPrimitives, DemoMesh, DemoSnow };
-    demos[Utils::demoIdx]();
+//    std::vector<std::function<void()>> demos = { DemoPrimitives, DemoMesh, DemoSnow };
+//    demos[Utils::demoIdx]();
+
+	static float time = 0;
+	time += 0.01f;
+	if(time > 15)
+		time = 0;
+	Utils::cameraPos = pathMap["camera"].interpolate(time);
+	Utils::cameraOrientation = pathMap["camera_orient"].interpolate(time);
+	scene.draw(meshMap);
 
     glutSwapBuffers();
     glFlush();

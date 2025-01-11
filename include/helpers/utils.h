@@ -1,7 +1,8 @@
 #pragma once
 
-#include <GL/glew.h>
 #include <string>
+#include <GL/glew.h>
+#include "glm/glm.hpp"
 
 #define FILE_PATH(type, name) FilePath(type, name).c_str()
 
@@ -17,6 +18,11 @@ namespace Utils
 
     extern int
         demoIdx;
+
+	extern glm::vec3
+		cameraPos,
+		cameraOrientation,
+		cameraVertical;
 
     void LoadTexture(const char* a_photoPath, GLuint& a_texture);
     void ProcessNormalKeys(unsigned char a_key, int, int);

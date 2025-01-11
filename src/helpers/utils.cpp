@@ -3,6 +3,7 @@
 #include "SOIL.h"
 #include <stdlib.h>
 #include <GL/freeglut_std.h>
+#include "glm/gtc/matrix_transform.hpp" // TODO: remove this
 
 namespace Utils
 {
@@ -13,6 +14,11 @@ namespace Utils
     float
         width{ 800.0f },
         height{ 600.0f };
+
+	glm::vec3
+		cameraPos = glm::vec3(0.f, 0.f, 5.f),
+		cameraOrientation = glm::vec3(1.f, 0.f, 0.f),
+		cameraVertical = glm::vec3(0.f, 0.f, -1.f);
 
     int
         demoIdx{ 0 };
@@ -39,7 +45,65 @@ namespace Utils
 
     void ProcessNormalKeys(unsigned char a_key, int, int)
     {
-        if (a_key >= '1' && a_key <= '9') {
+    	if (a_key == 'w' || a_key == 'W')
+		{
+			cameraPos += cameraOrientation * 0.08f;
+		}
+		else if (a_key == 's' || a_key == 'S')
+		{
+			cameraPos -= cameraOrientation * 0.08f;
+		}
+		else if (a_key == 'a' || a_key == 'A')
+		{
+			glm::vec4 aux = glm::rotate(glm::mat4(1.f), 0.1f, cameraVertical) * glm::vec4(cameraOrientation.x, cameraOrientation.y, cameraOrientation.z, 1);
+			cameraOrientation.x = aux.x;
+			cameraOrientation.y = aux.y;
+			cameraOrientation.z = aux.z;
+		}
+		else if (a_key == 'd' || a_key == 'D')
+		{
+			glm::vec4 aux = glm::rotate(glm::mat4(1.f), -0.1f, cameraVertical) * glm::vec4(cameraOrientation.x, cameraOrientation.y, cameraOrientation.z, 1);
+			cameraOrientation.x = aux.x;
+			cameraOrientation.y = aux.y;
+			cameraOrientation.z = aux.z;
+		}
+		else if (a_key == 'q' || a_key == 'Q')
+		{
+			auto rot = glm::rotate(glm::mat4(1.f), -0.1f, glm::cross(cameraVertical, cameraOrientation));
+			glm::vec4 aux = rot * glm::vec4(cameraOrientation.x, cameraOrientation.y, cameraOrientation.z, 1);
+			cameraOrientation.x = aux.x;
+			cameraOrientation.y = aux.y;
+			cameraOrientation.z = aux.z;
+			aux = rot * glm::vec4(cameraVertical.x, cameraVertical.y, cameraVertical.z, 1);
+			cameraVertical.x = aux.x;
+			cameraVertical.y = aux.y;
+			cameraVertical.z = aux.z;
+		}
+		else if (a_key == 'e' || a_key == 'E')
+		{
+			auto rot = glm::rotate(glm::mat4(1.f), 0.1f, glm::cross(cameraVertical, cameraOrientation));
+			glm::vec4 aux = rot * glm::vec4(cameraOrientation.x, cameraOrientation.y, cameraOrientation.z, 1);
+			cameraOrientation.x = aux.x;
+			cameraOrientation.y = aux.y;
+			cameraOrientation.z = aux.z;
+			aux = rot * glm::vec4(cameraVertical.x, cameraVertical.y, cameraVertical.z, 1);
+			cameraVertical.x = aux.x;
+			cameraVertical.y = aux.y;
+			cameraVertical.z = aux.z;
+		}
+		else if(a_key == 'x' || a_key == 'X')
+		{
+			printf("pos %f %f %f\nori %f %f %f\n", cameraPos.x, cameraPos.y, cameraPos.z, cameraOrientation.x, cameraOrientation.y, cameraOrientation.z);
+		}
+		// TODO: Get back here and remove this
+
+
+
+
+
+
+        if (a_key >= '1' && a_key <= '9')
+		{
             demoIdx = (a_key - '0') - 1;
         }
         if (a_key == 27)

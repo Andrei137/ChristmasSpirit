@@ -23,6 +23,6 @@ namespace Shaders
     // API to change the current shader
     void SetDefault();
     void SetBlack();
-    void SetMeshDefault(std::string a_texture_name);
+    void SetMeshDefault(std::string a_texture_name, glm::mat4 a_transformation);
     void SetCircle(glm::mat4 a_view = glm::mat4(0));
 }

@@ -80,11 +80,12 @@ namespace Shaders
         SetShader("black");
     }
 
-    void SetMeshDefault(std::string a_texture_name)
+    void SetMeshDefault(std::string a_texture_name, glm::mat4 a_tranformation)
     {
     	SetShader("mesh_default");
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Textures::Get(a_texture_name));
+        glUniformMatrix4fv(glGetUniformLocation(shaders["mesh_default"], "model2world"), 1, GL_FALSE, &a_tranformation[0][0]);
         glUniform1i(glGetUniformLocation(shaders["mesh_default"], "textureShader"), 0);
     }
 

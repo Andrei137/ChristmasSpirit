@@ -15,7 +15,7 @@ const glm::vec3
 
 const float
     PI{ 3.141592f },
-    ZNEAR{ 1 },
+    ZNEAR{ 0.01 },
     FOV{ 30 },
     SQRT3{ static_cast<float>(sqrt(3)) };
 
@@ -23,5 +23,6 @@ const std::string
     TITLE{ "ChristmasSpirit" },
     MESHES_PATH{ "resources/meshes" },
     BEZIER_PATH{ "resources/paths" },
+    SCENES_PATH{ "resources/scenes" },
     SHADERS_PATH{ "resources/shaders" },
     TEXTURES_PATH{ "resources/textures" };

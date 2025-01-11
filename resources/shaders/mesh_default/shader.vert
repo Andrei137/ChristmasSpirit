@@ -10,10 +10,11 @@ out vec2 uv;
 
 uniform mat4 viewShader;
 uniform mat4 projectionShader;
+uniform mat4 model2world;
 
 void main(void)
 {
-    gl_Position = projectionShader * viewShader * vec4(in_Position, 1.0f);
+    gl_Position = projectionShader * viewShader * model2world * vec4(in_Position, 1.0f);
 	ex_normal = in_Normal;
     uv = in_Uv;
 }

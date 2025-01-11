@@ -274,7 +274,7 @@ void Mesh::loadMesh(const char* a_file)
 	createGLids();
 }
 
-void Mesh::draw()
+void Mesh::draw() const
 {
 	glBindVertexArray(m_VaoId);
 	glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());

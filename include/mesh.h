@@ -12,7 +12,7 @@
 struct Mesh
 {
 	GLuint m_VaoId, m_VboId; // For the few models we'll use and the fact that they are small we will just not use an EBO to simplify the code.
-	
+
 	std::vector<glm::vec3> m_vertices;
 	std::vector<glm::vec3> m_normals;
 	std::vector<glm::vec2> m_uvs;
@@ -31,7 +31,7 @@ struct Mesh
 
 	void loadMesh(const char* a_file);
 
-	void draw();
+	void draw() const;
 
 	void clear();
 };
