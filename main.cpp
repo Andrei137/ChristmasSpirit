@@ -1,5 +1,6 @@
 #include <stack>
 #include <vector>
+#include <future>
 #include <iostream>
 #include <functional>
 #include <filesystem>
@@ -18,8 +19,8 @@
 #include "primitives/cone.h"
 #include "primitives/cylinder.h"
 #include "primitives/sphere.h"
-#include "mesh.h"
-#include "scene.h"
+#include "scene\mesh.h"
+#include "scene\scene.h"
 
 namespace fs = std::filesystem;
 using namespace Utils;
@@ -31,24 +32,39 @@ std::unordered_map<std::string, Mesh>
     meshMap;
 std::unordered_map<std::string, Path>
     pathMap;
-Scene scene;
+Scene
+    scene;
 
 /* Initialization Section */
 void LoadResources()
 {
+    std::vector<std::future<void>> futures;
     try
     {
-        for (const auto& mesh : fs::directory_iterator(MESHES_PATH))
-        {
-            assert(mesh.is_regular_file());
-            std::string name{ DropFileExtension(mesh.path().filename().string()) };
-            meshMap[name].loadMesh(FILE_PATH("mesh", name));
-        }
         for (const auto& path : fs::directory_iterator(BEZIER_PATH))
         {
             assert(path.is_regular_file());
             std::string name{ DropFileExtension(path.path().filename().string()) };
-            pathMap[name] = Path::readFromFile(FILE_PATH("path", name));
+            futures.push_back(std::async(std::launch::async, [name] {
+                pathMap[name] = Path::readFromFile(FILE_PATH("path", name));
+            }));
+        }
+
+        for (const auto& mesh : fs::directory_iterator(MESHES_PATH)) {
+            assert(mesh.is_regular_file());
+            std::string name{ DropFileExtension(mesh.path().filename().string()) };
+            futures.push_back(std::async(std::launch::async, [name] {
+                meshMap[name].loadMesh(FILE_PATH("mesh", name));
+            }));
+        }
+        for (auto& future : futures)
+        {
+            future.get();
+        }
+
+        for (auto& [name, mesh] : meshMap)
+        {
+            mesh.createGLids();
         }
         Shaders::Create();
         Textures::Create();
@@ -139,21 +155,14 @@ void DemoSnow()
     glDisable(GL_BLEND);
 }
 
-void DemoMesh()
-{
-    SetMVP("demo_1");
-//    Shaders::SetMeshDefault("santa");
-//    meshMap["santa"].draw();
-}
-
 /* Main Section */
 void RenderScene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-//    std::vector<std::function<void()>> demos = { DemoPrimitives, DemoMesh, DemoSnow };
-//    demos[Utils::demoIdx]();
+    // std::vector<std::function<void()>> demos = { DemoPrimitives, DemoMesh, DemoSnow };
+    // demos[Utils::demoIdx]();
 
 	static float time = 0;
 	time += 0.01f;

@@ -1,6 +1,6 @@
 // Ilie Dumitru
 
-#include "scene.h"
+#include "scene/scene.h"
 #include "helpers/utils.h"
 #include "helpers/shaders.h"
 #include "helpers/constants.h"
@@ -25,12 +25,12 @@ void Scene::loadScene(const char* a_file)
 		m_meshes.push_back(mesh);
 		m_textures.push_back(texture);
 		m_transformations.push_back(
-									glm::translate(glm::mat4(1.f), glm::vec3(tx, ty, tz)) *
-									glm::rotate(glm::mat4(1.f), rx, glm::vec3(1.f, 0.f, 0.f)) *
-									glm::rotate(glm::mat4(1.f), ry, glm::vec3(0.f, 0.f, 1.f)) *
-									glm::rotate(glm::mat4(1.f), rz, glm::vec3(0.f, 1.f, 0.f)) *
-									glm::scale(glm::mat4(1.f), glm::vec3(sx, sy, sz))
-									);
+			glm::translate(glm::mat4(1.f), glm::vec3(tx, ty, tz))     *
+			glm::rotate(glm::mat4(1.f), rx, glm::vec3(1.f, 0.f, 0.f)) *
+			glm::rotate(glm::mat4(1.f), ry, glm::vec3(0.f, 0.f, 1.f)) *
+			glm::rotate(glm::mat4(1.f), rz, glm::vec3(0.f, 1.f, 0.f)) *
+			glm::scale(glm::mat4(1.f), glm::vec3(sx, sy, sz))
+		);
 	}
 }
 
@@ -43,7 +43,6 @@ void Scene::clear()
 
 void Scene::draw(const std::unordered_map<std::string, Mesh>& a_meshes)
 {
-	// TODO: remove the following section
 	Shaders::SetMVP(
 		glm::lookAt(Utils::cameraPos, Utils::cameraPos + Utils::cameraOrientation, Utils::cameraVertical),
 		glm::infinitePerspective(FOV, GLfloat(Utils::width) / GLfloat(Utils::height), ZNEAR)
@@ -52,7 +51,6 @@ void Scene::draw(const std::unordered_map<std::string, Mesh>& a_meshes)
 	for (int i = 0; i < static_cast<int>(m_meshes.size()); ++i)
 	{
 		Shaders::SetMeshDefault(m_textures[i], m_transformations[i]);
-
 		a_meshes.find(m_meshes[i])->second.draw();
 	}
 }

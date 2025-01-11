@@ -1,6 +1,6 @@
 // Ilie Dumitru
 
-#include "mesh.h"
+#include "scene/mesh.h"
 #include "glm/glm.hpp"
 #include <string>
 #include <fstream>
@@ -270,8 +270,6 @@ void Mesh::loadMesh(const char* a_file)
 			// If it ever gets here, it is something we don't need most likely
 		}
 	}
-
-	createGLids();
 }
 
 void Mesh::draw() const
