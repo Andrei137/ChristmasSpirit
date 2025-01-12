@@ -39,22 +39,29 @@ Scene
 void LoadResources()
 {
     std::vector<std::future<void>> futures;
+    std::mutex pathMapMutex;
+    std::mutex meshMapMutex;
     try
     {
         for (const auto& path : fs::directory_iterator(BEZIER_PATH))
         {
             assert(path.is_regular_file());
             std::string name{ DropFileExtension(path.path().filename().string()) };
-            futures.push_back(std::async(std::launch::async, [name] {
-                pathMap[name] = Path::readFromFile(FILE_PATH("path", name));
+            futures.push_back(std::async(std::launch::async, [name, &pathMapMutex] {
+                Path data{ Path::readFromFile(FILE_PATH("path", name)) };
+                std::lock_guard<std::mutex> lock(pathMapMutex);
+                pathMap[name] = std::move(data);
             }));
         }
 
         for (const auto& mesh : fs::directory_iterator(MESHES_PATH)) {
             assert(mesh.is_regular_file());
             std::string name{ DropFileExtension(mesh.path().filename().string()) };
-            futures.push_back(std::async(std::launch::async, [name] {
-                meshMap[name].loadMesh(FILE_PATH("mesh", name));
+            futures.push_back(std::async(std::launch::async, [name, &meshMapMutex] {
+                Mesh meshData;
+                meshData.loadMesh(FILE_PATH("mesh", name));
+                std::lock_guard<std::mutex> lock(meshMapMutex);
+                meshMap[name] = std::move(meshData);
             }));
         }
         for (auto& future : futures)

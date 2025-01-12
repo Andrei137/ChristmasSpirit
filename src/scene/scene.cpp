@@ -15,7 +15,7 @@ void Scene::loadScene(const char* a_file)
 	std::ifstream in(SCENES_PATH + "/" + a_file);
 	std::string mesh, texture;
 	float tx, ty, tz, rx, ry, rz, sx, sy, sz;
-	const float PI = atan2(0, -1), DEG2RAD = PI / 180;
+	const float PI{ static_cast<float>(atan2(0, -1)) }, DEG2RAD{ PI / 180 };
 
 	while (in >> mesh >> texture >> tx >> ty >> tz >> rx >> ry >> rz >> sx >> sy >> sz)
 	{
