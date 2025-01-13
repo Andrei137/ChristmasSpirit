@@ -1,10 +1,10 @@
-#include "primitives/circle.h"
+#include "scene/snow.h"
 #include <GL/freeglut.h>
 #include "helpers/shaders.h"
 #include "glm/gtc/matrix_transform.hpp"
 #include <cstdlib>
 
-namespace Circle
+namespace Snow
 {
     GLuint
         VaoId,
@@ -36,8 +36,8 @@ namespace Circle
 
     void ResetLocation(int a_instID)
     {
-        positionDisplacements[a_instID].x = (rand() / (float)RAND_MAX - 0.5f) * 20.f;
-        positionDisplacements[a_instID].y = (rand() / (float)RAND_MAX - 0.5f) * 20.f;
+        positionDisplacements[a_instID].x = (rand() / (float)RAND_MAX - 0.5f) * 6.f;
+        positionDisplacements[a_instID].y = (rand() / (float)RAND_MAX - 0.5f) * 6.f;
     }
 
     void UpdateTimeDisplacements(float a_pathLength, float a_deltaTime, int a_instID)
@@ -124,12 +124,11 @@ namespace Circle
         glBufferData(GL_ARRAY_BUFFER, sizeof(translationMat), translationMat, GL_DYNAMIC_DRAW);
     }
 
-    void Draw()
+    void Draw(glm::mat4 a_translation)
     {
-        Shaders::SetCircle(glm::lookAt(glm::vec3(REF.x + 25.f, REF.y, REF.z + 25.f), REF, VERT));
+        Shaders::SetCircle(a_translation);
         glBindVertexArray(VaoId);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EboId);
-
         glDrawElementsInstanced(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0, 35);
     }
 

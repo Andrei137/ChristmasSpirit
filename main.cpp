@@ -16,12 +16,12 @@
 #include "helpers/shaders.h"
 #include "helpers/textures.h"
 #include "helpers/utils.h"
-#include "primitives/circle.h"
 #include "primitives/cone.h"
 #include "primitives/cylinder.h"
 #include "primitives/sphere.h"
-#include "scene\mesh.h"
-#include "scene\scene.h"
+#include "scene/mesh.h"
+#include "scene/scene.h"
+#include "scene/snow.h"
 
 namespace fs = std::filesystem;
 using namespace Utils;
@@ -37,7 +37,7 @@ Scene
     scene;
 
 /* Initialization Section */
-void LoadResources()
+void LoadResources(bool debug = false)
 {
     std::vector<std::future<void>> futures;
     std::mutex pathMapMutex;
@@ -56,6 +56,7 @@ void LoadResources()
         }
 
         for (const auto& mesh : fs::directory_iterator(MESHES_PATH)) {
+            if (debug) break;
             assert(mesh.is_regular_file());
             std::string name{ DropFileExtension(mesh.path().filename().string()) };
             futures.push_back(std::async(std::launch::async, [name, &meshMapMutex] {
@@ -88,7 +89,7 @@ void Initialize()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     LoadResources();
-    Circle::CreateVBO(pathMap["snow"].length());
+    Snow::CreateVBO(pathMap["snow"].length());
     Cone::CreateVBO();
     Cylinder::CreateVBO();
     Sphere::CreateVBO();
@@ -115,7 +116,7 @@ void Cleanup()
 {
     Shaders::Destroy();
     Textures::Destroy();
-    Circle::DestroyVBO();
+    Snow::DestroyVBO();
     Cone::DestroyVBO();
     Cylinder::DestroyVBO();
     Sphere::DestroyVBO();
@@ -157,18 +158,21 @@ void DemoPrimitives()
 
 void DemoMesh()
 {
+    Snow::Draw(
+        glm::translate(glm::mat4(1.f), glm::vec3(1.3f, 21.f, 8.f))
+    );
+    Snow::Draw(
+        glm::translate(glm::mat4(1.f), glm::vec3(-21.7f, 6.7f, 8.f))
+    );
+    Snow::Draw(
+        glm::translate(glm::mat4(1.f), glm::vec3(-21.7f, -6.7f, 8.f))
+    );
+    Snow::UpdateTranslations(pathMap["snow"], 0.01f);
     static float time{ 0.f };
     Utils::cameraPos = pathMap["camera"].interpolate(time);
     Utils::cameraOrientation = glm::normalize(pathMap["camera_orient"].interpolate(time));
     scene.draw(meshMap);
     time += 0.01f;
-}
-
-void DemoSnow()
-{
-    SetMVP("demo_0");
-    Circle::Draw();
-    Circle::UpdateTranslations(pathMap["snow"], 0.01f);
 }
 
 /* Main Section */
@@ -177,7 +181,7 @@ void RenderScene()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-    std::vector<std::function<void()>> demos = { DemoSnow, DemoPrimitives, DemoMesh };
+    std::vector<std::function<void()>> demos = { DemoPrimitives, DemoMesh };
     demos[Utils::demoIdx]();
 
     glutSwapBuffers();

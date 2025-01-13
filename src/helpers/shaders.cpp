@@ -59,11 +59,9 @@ namespace Shaders
         }
     }
 
-    void SetShader(std::string a_name, glm::mat4 a_custom_view = glm::mat4(0))
+    void SetShader(std::string a_name)
     {
         GLuint shaderID{ shaders[a_name] };
-        glm::mat4 viewToUse{ a_custom_view != glm::mat4(0) ? a_custom_view : view };
-
         glUseProgram(shaderID);
         glUniformMatrix4fv(
             glGetUniformLocation(shaderID, "projectionShader"),
@@ -71,7 +69,7 @@ namespace Shaders
         );
         glUniformMatrix4fv(
             glGetUniformLocation(shaderID, "viewShader"),
-            1, GL_FALSE, &viewToUse[0][0]
+            1, GL_FALSE, &view[0][0]
         );
     }
 
@@ -98,9 +96,13 @@ namespace Shaders
         glUniform1i(glGetUniformLocation(shaders["mesh_default"], "textureShader"), 0);
     }
 
-    void SetCircle(glm::mat4 a_view)
+    void SetCircle(glm::mat4 a_translation)
     {
-        SetShader("circle", a_view);
+        SetShader("circle");
         glUniform1f(glGetUniformLocation(shaders["circle"], "time"), glutGet(GLUT_ELAPSED_TIME) * 0.01);
+        glUniformMatrix4fv(
+            glGetUniformLocation(shaders["circle"], "translateToLocation"),
+            1, GL_FALSE, &a_translation[0][0]
+        );
     }
 }
