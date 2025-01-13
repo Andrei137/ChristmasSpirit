@@ -169,6 +169,18 @@ void DemoSnow()
     SetMVP("demo_0");
     glEnable(GL_BLEND);
     Circle::Draw();
+    for (int instID = 0; instID < SNOW_COUNT; instID++)
+    {
+        Circle::TranslationMat[instID] = glm::translate(
+            glm::mat4(1.0f),
+            glm::vec3(
+                90 * instID * cos(instID + 1000),
+                90 * instID * sin(instID),
+                0.0
+            )
+        );
+    }
+    Circle::UpdateTranslations();
     glDisable(GL_BLEND);
 }
 

@@ -1,7 +1,6 @@
 #include "primitives/circle.h"
 #include <GL/freeglut.h>
 #include "helpers/shaders.h"
-#include "helpers/constants.h"
 #include "glm/gtc/matrix_transform.hpp"
 
 namespace Circle
@@ -12,6 +11,9 @@ namespace Circle
         VbIdx,
         VbTranslationMat,
         EboId;
+
+    glm::mat4
+        TranslationMat[SNOW_COUNT];
 
     std::array<glm::vec2, 3> GetCoords(const glm::vec2& a_center)
     {
@@ -31,7 +33,6 @@ namespace Circle
         int currIdx{ 0 };
         static GLfloat Vertices[6];
         static GLfloat Idx[3];
-        static glm::mat4 TranslationMat[SNOW_COUNT];
         static GLint Indices[3];
 
         for (int i = 0; i < 3; ++i)
@@ -71,7 +72,7 @@ namespace Circle
 
         glGenBuffers(1, &VbTranslationMat);
         glBindBuffer(GL_ARRAY_BUFFER, VbTranslationMat);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(TranslationMat), TranslationMat, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(TranslationMat), TranslationMat, GL_DYNAMIC_DRAW);
         for (int i = 0; i < 4; i++)
         {
             glEnableVertexAttribArray(2 + i);
@@ -85,6 +86,12 @@ namespace Circle
         glGenBuffers(1, &EboId);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EboId);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
+    }
+
+    void UpdateTranslations()
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, VbTranslationMat);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(TranslationMat), TranslationMat, GL_DYNAMIC_DRAW);
     }
 
     void Draw()
