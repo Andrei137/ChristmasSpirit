@@ -165,12 +165,13 @@ void RenderScene()
     // demos[Utils::demoIdx]();
 
 	static float time = 0;
-	time += 0.01f;
-	if(time > 15)
-		time = 0;
-	Utils::cameraPos = pathMap["camera"].interpolate(time);
-	Utils::cameraOrientation = pathMap["camera_orient"].interpolate(time);
+	static const float len = 54.5, base = 0;
+	Utils::cameraPos = pathMap["camera"].interpolate(base + time);
+	Utils::cameraOrientation = glm::normalize(pathMap["camera_orient"].interpolate(base + time));
 	scene.draw(meshMap);
+	time += 0.01f;
+//	if(time > len)
+//		time = 0;
 
     glutSwapBuffers();
     glFlush();
