@@ -19,11 +19,6 @@ struct Mesh
 
 	Mesh();
 	~Mesh();
-	// Don't want wrong copying of mesh data.
-	Mesh(const Mesh&) = delete;
-	Mesh(Mesh&&) = delete;
-	Mesh& operator=(const Mesh&) = delete;
-	Mesh& operator=(Mesh&&) = delete;
 
 	void copy(const Mesh& a_mesh);
 

@@ -15,8 +15,8 @@ const glm::vec3
 
 const float
     PI{ 3.141592f },
-    ZNEAR{ 0.01 },
-    FOV{ 30 },
+    ZNEAR{ 0.01f },
+    FOV{ 30.0f },
     SQRT3{ static_cast<float>(sqrt(3)) };
 
 const std::string
