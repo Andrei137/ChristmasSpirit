@@ -2,6 +2,7 @@
 
 layout (location = 0) in vec2 in_Position;
 layout (location = 1) in float in_Idx;
+layout (location = 2) in mat4 in_Translation;
 
 out vec4 gl_Position;
 out vec2 ex_Pos;
@@ -9,16 +10,58 @@ out vec3 ex_Color;
 
 uniform mat4 viewShader;
 uniform mat4 projectionShader;
+uniform float time;
 
 const vec2 triangleCoords[3] = vec2[3](
     vec2(0.0f, 2.0f),
     vec2(-sqrt(3), -1.0f),
     vec2(sqrt(3), -1.0f)
 );
+const float PI = 3.141592;
+mat4 matrRot;
+int instID;
+
+mat4 rotateX(float theta)
+{
+    return mat4(
+        1.0,         0.0,        0.0,  0.0,
+        0.0,  cos(theta), sin(theta),  0.0,
+        0.0, -sin(theta), cos(theta),  0.0,
+        0.0,         0.0,        0.0,  1.0
+    );
+}
+
+mat4 rotateY(float theta)
+{
+    return mat4(
+        cos(theta) ,   0.0, sin(theta), 0.0,
+        0.0        ,   1.0,        0.0, 0.0,
+        -sin(theta),   0.0, cos(theta), 0.0,
+        0.0        ,   0.0,        0.0, 1.0
+    );
+}
+
+mat4 rotateZ(float theta)
+{
+    return mat4(
+        cos(theta) , sin(theta), 0.0,  0.0,
+        -sin(theta), cos(theta), 0.0,  0.0,
+        0.0        ,        0.0, 1.0,  0.0,
+        0.0        ,        0.0, 0.0,  1.0
+    );
+}
 
 void main()
 {
-    gl_Position = projectionShader * viewShader * vec4(in_Position, 0.0f, 1.0f);
+    float instID = float(gl_InstanceID);
+
+    matrRot = rotateX((instID + time + 1) * PI / 10)
+            * rotateY(instID + time * PI / 6)
+            * rotateZ((time + 3 * instID * PI) / 2);
+
+    gl_Position = projectionShader * viewShader *
+                  in_Translation * matrRot * vec4(in_Position, 0.0f, 1.0f);
+
     ex_Pos = triangleCoords[int(in_Idx)];
     ex_Color = vec3(0.0f, 0.631f, 0.964f);
 }

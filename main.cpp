@@ -54,16 +54,16 @@ void LoadResources()
             }));
         }
 
-        for (const auto& mesh : fs::directory_iterator(MESHES_PATH)) {
-            assert(mesh.is_regular_file());
-            std::string name{ DropFileExtension(mesh.path().filename().string()) };
-            futures.push_back(std::async(std::launch::async, [name, &meshMapMutex] {
-                Mesh meshData;
-                meshData.loadMesh(FILE_PATH("mesh", name));
-                std::lock_guard<std::mutex> lock(meshMapMutex);
-                meshMap[name] = std::move(meshData);
-            }));
-        }
+        // for (const auto& mesh : fs::directory_iterator(MESHES_PATH)) {
+        //     assert(mesh.is_regular_file());
+        //     std::string name{ DropFileExtension(mesh.path().filename().string()) };
+        //     futures.push_back(std::async(std::launch::async, [name, &meshMapMutex] {
+        //         Mesh meshData;
+        //         meshData.loadMesh(FILE_PATH("mesh", name));
+        //         std::lock_guard<std::mutex> lock(meshMapMutex);
+        //         meshMap[name] = std::move(meshData);
+        //     }));
+        // }
         for (auto& future : futures)
         {
             future.get();
@@ -154,6 +154,16 @@ void DemoPrimitives()
     }
 }
 
+void DemoMesh()
+{
+    static float time = 0;
+    static const float len = 54.5, base = 0;
+    Utils::cameraPos = pathMap["camera"].interpolate(base + time);
+    Utils::cameraOrientation = glm::normalize(pathMap["camera_orient"].interpolate(base + time));
+    scene.draw(meshMap);
+    time += 0.01f;
+}
+
 void DemoSnow()
 {
     SetMVP("demo_0");
@@ -168,17 +178,8 @@ void RenderScene()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-    // std::vector<std::function<void()>> demos = { DemoPrimitives, DemoMesh, DemoSnow };
-    // demos[Utils::demoIdx]();
-
-	static float time = 0;
-	static const float len = 54.5, base = 0;
-	Utils::cameraPos = pathMap["camera"].interpolate(base + time);
-	Utils::cameraOrientation = glm::normalize(pathMap["camera_orient"].interpolate(base + time));
-	scene.draw(meshMap);
-	time += 0.01f;
-//	if(time > len)
-//		time = 0;
+    std::vector<std::function<void()>> demos = { DemoSnow, DemoPrimitives, DemoMesh };
+    demos[Utils::demoIdx]();
 
     glutSwapBuffers();
     glFlush();
@@ -191,7 +192,7 @@ int main(int argc, char* argv[])
     glutInitWindowSize(static_cast<int>(winWidth), static_cast<int>(winHeight));
     glutInitWindowPosition(POSX, POSY);
     glutCreateWindow(TITLE.c_str());
-    glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glewInit();
     Initialize();
     glutReshapeFunc(ReshapeWindow);

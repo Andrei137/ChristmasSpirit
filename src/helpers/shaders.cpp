@@ -65,8 +65,14 @@ namespace Shaders
         glm::mat4 viewToUse{ a_custom_view != glm::mat4(0) ? a_custom_view : view };
 
         glUseProgram(shaderID);
-        glUniformMatrix4fv(glGetUniformLocation(shaderID, "projectionShader"), 1, GL_FALSE, &proj[0][0]);
-        glUniformMatrix4fv(glGetUniformLocation(shaderID, "viewShader"), 1, GL_FALSE, &viewToUse[0][0]);
+        glUniformMatrix4fv(
+            glGetUniformLocation(shaderID, "projectionShader"),
+            1, GL_FALSE, &proj[0][0]
+        );
+        glUniformMatrix4fv(
+            glGetUniformLocation(shaderID, "viewShader"),
+            1, GL_FALSE, &viewToUse[0][0]
+        );
     }
 
     // API to change the current shader
@@ -85,12 +91,16 @@ namespace Shaders
     	SetShader("mesh_default");
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Textures::Get(a_texture_name));
-        glUniformMatrix4fv(glGetUniformLocation(shaders["mesh_default"], "model2world"), 1, GL_FALSE, &a_tranformation[0][0]);
+        glUniformMatrix4fv(
+            glGetUniformLocation(shaders["mesh_default"], "model2world"),
+            1, GL_FALSE, &a_tranformation[0][0]
+        );
         glUniform1i(glGetUniformLocation(shaders["mesh_default"], "textureShader"), 0);
     }
 
     void SetCircle(glm::mat4 a_view)
     {
         SetShader("circle", a_view);
+        glUniform1f(glGetUniformLocation(shaders["circle"], "time"), glutGet(GLUT_ELAPSED_TIME) * 0.01);
     }
 }

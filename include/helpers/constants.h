@@ -13,6 +13,9 @@ const glm::vec3
     REF{ glm::vec3(0.0f, 0.0f, 0.0f) },
     VERT{ glm::vec3(0.0f, 0.0f, -1.0f) };
 
+const int
+    SNOW_COUNT{ 60 };
+
 const float
     PI{ 3.141592f },
     ZNEAR{ 0.01f },
