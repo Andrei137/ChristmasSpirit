@@ -83,3 +83,13 @@ glm::vec3 Path::interpolate(float a_time) const
 
 	return m_curves.back().interpolate(1.);
 }
+
+float Path::length() const
+{
+	float sum{ 0.f };
+	for (const float time : m_times)
+	{
+		sum += time;
+	}
+	return sum;
+}

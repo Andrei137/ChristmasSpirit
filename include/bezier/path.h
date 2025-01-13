@@ -23,4 +23,6 @@ struct Path
 	Warning: Floating point operations are made in this function. Associated errors can occur.
 	*/
 	glm::vec3 interpolate(float a_time) const;
+
+	float length() const;
 };

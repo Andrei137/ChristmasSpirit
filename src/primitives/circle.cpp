@@ -2,6 +2,7 @@
 #include <GL/freeglut.h>
 #include "helpers/shaders.h"
 #include "glm/gtc/matrix_transform.hpp"
+#include <cstdlib>
 
 namespace Circle
 {
@@ -12,8 +13,14 @@ namespace Circle
         VbTranslationMat,
         EboId;
 
+    float
+        timeDisplacements[SNOW_COUNT];
+
+    glm::vec2
+        positionDisplacements[SNOW_COUNT];
+
     glm::mat4
-        TranslationMat[SNOW_COUNT];
+        translationMat[SNOW_COUNT];
 
     std::array<glm::vec2, 3> GetCoords(const glm::vec2& a_center)
     {
@@ -27,7 +34,23 @@ namespace Circle
         };
     }
 
-    void CreateVBO()
+    void ResetLocation(int a_instID)
+    {
+        positionDisplacements[a_instID].x = (rand() / (float)RAND_MAX - 0.5f) * 20.f;
+        positionDisplacements[a_instID].y = (rand() / (float)RAND_MAX - 0.5f) * 20.f;
+    }
+
+    void UpdateTimeDisplacements(float a_pathLength, float a_deltaTime, int a_instID)
+    {
+        timeDisplacements[a_instID] += a_deltaTime;
+        if (timeDisplacements[a_instID] >= a_pathLength)
+        {
+            timeDisplacements[a_instID] -= a_pathLength;
+            ResetLocation(a_instID);
+        }
+    }
+
+    void CreateVBO(float pathLength)
     {
         std::array<glm::vec2, 3> coords{ GetCoords({ 0, 0 }) };
         int currIdx{ 0 };
@@ -43,16 +66,10 @@ namespace Circle
             Indices[i] = i;
         }
 
-        for (int instID = 0; instID < SNOW_COUNT; instID++)
+        for (int i = 0; i < SNOW_COUNT; ++i)
         {
-            TranslationMat[instID] = glm::translate(
-                glm::mat4(1.0f),
-                glm::vec3(
-                    90 * instID * cos(instID),
-                    90 * instID * sin(instID),
-                    0.0
-                )
-            );
+            ResetLocation(i);
+            timeDisplacements[i] = (rand() / (float)RAND_MAX) * pathLength;
         }
 
         glGenVertexArrays(1, &VaoId);
@@ -72,7 +89,7 @@ namespace Circle
 
         glGenBuffers(1, &VbTranslationMat);
         glBindBuffer(GL_ARRAY_BUFFER, VbTranslationMat);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(TranslationMat), TranslationMat, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(translationMat), translationMat, GL_DYNAMIC_DRAW);
         for (int i = 0; i < 4; i++)
         {
             glEnableVertexAttribArray(2 + i);
@@ -88,15 +105,28 @@ namespace Circle
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
     }
 
-    void UpdateTranslations()
+    void UpdateTranslations(const Path& a_path, float a_deltaTime)
     {
+        float pathLength{ a_path.length() };
+        for (int instID = 0; instID < SNOW_COUNT; ++instID)
+        {
+            translationMat[instID] = glm::translate(
+                glm::mat4(1.0f),
+                glm::vec3(
+                    positionDisplacements[instID].x,
+                    positionDisplacements[instID].y,
+                    0.0
+                ) + (a_path.interpolate(timeDisplacements[instID]))
+            );
+            UpdateTimeDisplacements(pathLength, a_deltaTime, instID);
+        }
         glBindBuffer(GL_ARRAY_BUFFER, VbTranslationMat);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(TranslationMat), TranslationMat, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(translationMat), translationMat, GL_DYNAMIC_DRAW);
     }
 
     void Draw()
     {
-        Shaders::SetCircle(glm::lookAt(glm::vec3(REF.x + 0.01f, REF.y, REF.z + 2000.f), REF, VERT));
+        Shaders::SetCircle(glm::lookAt(glm::vec3(REF.x + 25.f, REF.y, REF.z + 25.f), REF, VERT));
         glBindVertexArray(VaoId);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EboId);
 

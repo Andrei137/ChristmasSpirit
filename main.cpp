@@ -1,6 +1,7 @@
 #include <stack>
 #include <vector>
 #include <future>
+#include <cstdlib>
 #include <iostream>
 #include <functional>
 #include <filesystem>
@@ -54,16 +55,16 @@ void LoadResources()
             }));
         }
 
-        // for (const auto& mesh : fs::directory_iterator(MESHES_PATH)) {
-        //     assert(mesh.is_regular_file());
-        //     std::string name{ DropFileExtension(mesh.path().filename().string()) };
-        //     futures.push_back(std::async(std::launch::async, [name, &meshMapMutex] {
-        //         Mesh meshData;
-        //         meshData.loadMesh(FILE_PATH("mesh", name));
-        //         std::lock_guard<std::mutex> lock(meshMapMutex);
-        //         meshMap[name] = std::move(meshData);
-        //     }));
-        // }
+        for (const auto& mesh : fs::directory_iterator(MESHES_PATH)) {
+            assert(mesh.is_regular_file());
+            std::string name{ DropFileExtension(mesh.path().filename().string()) };
+            futures.push_back(std::async(std::launch::async, [name, &meshMapMutex] {
+                Mesh meshData;
+                meshData.loadMesh(FILE_PATH("mesh", name));
+                std::lock_guard<std::mutex> lock(meshMapMutex);
+                meshMap[name] = std::move(meshData);
+            }));
+        }
         for (auto& future : futures)
         {
             future.get();
@@ -85,9 +86,9 @@ void LoadResources()
 
 void Initialize()
 {
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     LoadResources();
-    Circle::CreateVBO();
+    Circle::CreateVBO(pathMap["snow"].length());
     Cone::CreateVBO();
     Cylinder::CreateVBO();
     Sphere::CreateVBO();
@@ -156,10 +157,9 @@ void DemoPrimitives()
 
 void DemoMesh()
 {
-    static float time = 0;
-    static const float len = 54.5, base = 0;
-    Utils::cameraPos = pathMap["camera"].interpolate(base + time);
-    Utils::cameraOrientation = glm::normalize(pathMap["camera_orient"].interpolate(base + time));
+    static float time{ 0.f };
+    Utils::cameraPos = pathMap["camera"].interpolate(time);
+    Utils::cameraOrientation = glm::normalize(pathMap["camera_orient"].interpolate(time));
     scene.draw(meshMap);
     time += 0.01f;
 }
@@ -167,21 +167,8 @@ void DemoMesh()
 void DemoSnow()
 {
     SetMVP("demo_0");
-    glEnable(GL_BLEND);
     Circle::Draw();
-    for (int instID = 0; instID < SNOW_COUNT; instID++)
-    {
-        Circle::TranslationMat[instID] = glm::translate(
-            glm::mat4(1.0f),
-            glm::vec3(
-                90 * instID * cos(instID + 1000),
-                90 * instID * sin(instID),
-                0.0
-            )
-        );
-    }
-    Circle::UpdateTranslations();
-    glDisable(GL_BLEND);
+    Circle::UpdateTranslations(pathMap["snow"], 0.01f);
 }
 
 /* Main Section */
@@ -199,12 +186,14 @@ void RenderScene()
 
 int main(int argc, char* argv[])
 {
+    srand(time(0));
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowSize(static_cast<int>(winWidth), static_cast<int>(winHeight));
     glutInitWindowPosition(POSX, POSY);
     glutCreateWindow(TITLE.c_str());
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
     glewInit();
     Initialize();
     glutReshapeFunc(ReshapeWindow);

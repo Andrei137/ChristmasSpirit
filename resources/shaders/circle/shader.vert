@@ -11,6 +11,7 @@ out vec3 ex_Color;
 uniform mat4 viewShader;
 uniform mat4 projectionShader;
 uniform float time;
+uniform mat4 translateToLocation;
 
 const vec2 triangleCoords[3] = vec2[3](
     vec2(0.0f, 2.0f),
@@ -60,8 +61,9 @@ void main()
             * rotateZ((time + 3 * instID * PI) / 2);
 
     gl_Position = projectionShader * viewShader *
-                  in_Translation * matrRot * vec4(in_Position, 0.0f, 1.0f);
+                  translateToLocation * in_Translation * matrRot *
+                  vec4(in_Position, 0.0f, 1.0f);
 
     ex_Pos = triangleCoords[int(in_Idx)];
-    ex_Color = vec3(0.0f, 0.631f, 0.964f);
+    ex_Color = vec3(1.f, 1.f, 1.f);
 }
