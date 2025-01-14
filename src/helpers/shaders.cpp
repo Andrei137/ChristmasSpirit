@@ -88,7 +88,8 @@ namespace Shaders
     void SetSnow(glm::mat4 a_translation)
     {
         SetShader("snow");
-        Utils::SetUniformFloat(shaders["snow"], "time", glutGet(GLUT_ELAPSED_TIME) * DELTA_TIME_SNOW);
+        Utils::SetUniformFloat(shaders["snow"], "time", glutGet(GLUT_ELAPSED_TIME) * 0.005);
+        Utils::SetUniformFloat(shaders["snow"], "radius", SNOW_RADIUS);
         Utils::SetUniformMat(shaders["snow"], "translateToLocation", a_translation);
     }
 }

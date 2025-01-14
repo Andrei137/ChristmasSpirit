@@ -1,8 +1,7 @@
 #version 330 core
 
-layout (location = 0) in vec2 in_Position;
-layout (location = 1) in float in_Idx;
-layout (location = 2) in mat4 in_Translation;
+layout (location = 0) in float in_Idx;
+layout (location = 1) in mat4 in_Translation;
 
 out vec4 gl_Position;
 out vec2 ex_Pos;
@@ -11,16 +10,18 @@ out vec3 ex_Color;
 uniform mat4 viewShader;
 uniform mat4 projectionShader;
 uniform float time;
+uniform float radius;
 uniform mat4 translateToLocation;
 
-const vec2 triangleCoords[3] = vec2[3](
-    vec2(0.0f, 2.0f),
-    vec2(-sqrt(3), -1.0f),
-    vec2(sqrt(3), -1.0f)
-);
 const float PI = 3.141592;
-mat4 matrRot;
 int instID;
+mat4 matrRot;
+
+const vec2 triangleCoords[3] = vec2[3](
+    vec2(    0.0f,  2.0f),
+    vec2(-sqrt(3), -1.0f),
+    vec2( sqrt(3), -1.0f)
+);
 
 mat4 rotateX(float theta)
 {
@@ -60,9 +61,9 @@ void main()
             * rotateY(instID / 6)
             * rotateZ(3 * instID / 2);
 
-    gl_Position = projectionShader * viewShader *
-                  translateToLocation * in_Translation * matrRot *
-                  vec4(in_Position, 0.0f, 1.0f);
+    gl_Position = projectionShader * viewShader
+                * translateToLocation * in_Translation * matrRot
+                * vec4(triangleCoords[int(in_Idx)] * radius, 0.0f, 1.0f);
 
     ex_Pos = triangleCoords[int(in_Idx)];
     ex_Color = vec3(1.f, 1.f, 1.f);
