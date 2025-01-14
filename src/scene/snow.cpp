@@ -1,8 +1,12 @@
 #include "scene/snow.h"
 #include <GL/freeglut.h>
 #include "helpers/shaders.h"
+#include "helpers/constants.h"
 #include "glm/gtc/matrix_transform.hpp"
 #include <cstdlib>
+#include <array>
+#include <vector>
+#include <fstream>
 
 namespace Snow
 {
@@ -14,19 +18,26 @@ namespace Snow
         EboId;
 
     float
+        pathLength,
         timeDisplacements[SNOW_COUNT];
 
     glm::vec2
         positionDisplacements[SNOW_COUNT];
 
+    std::vector<glm::vec3>
+        translations;
+
     glm::mat4
         translationMat[SNOW_COUNT];
 
+    Path
+        snowPath;
+
     std::array<glm::vec2, 3> GetCoords(const glm::vec2& a_center)
     {
-        glm::vec2 top{ a_center.x, a_center.y + 2 * radius };
-        glm::vec2 left_bottom{ a_center.x - SQRT3 * radius, a_center.y - radius };
-        glm::vec2 right_bottom{ a_center.x + SQRT3 * radius, a_center.y - radius };
+        glm::vec2 top{ a_center.x, a_center.y + 2 * SNOW_RADIUS };
+        glm::vec2 left_bottom{ a_center.x - SQRT3 * SNOW_RADIUS, a_center.y - SNOW_RADIUS };
+        glm::vec2 right_bottom{ a_center.x + SQRT3 * SNOW_RADIUS, a_center.y - SNOW_RADIUS };
         return {
             top,
             left_bottom,
@@ -34,24 +45,46 @@ namespace Snow
         };
     }
 
-    void ResetLocation(int a_instID)
+    void ReadTranslations(const char* a_file)
     {
-        positionDisplacements[a_instID].x = (rand() / (float)RAND_MAX - 0.5f) * 6.f;
-        positionDisplacements[a_instID].y = (rand() / (float)RAND_MAX - 0.5f) * 6.f;
-    }
+        translations.clear();
 
-    void UpdateTimeDisplacements(float a_pathLength, float a_deltaTime, int a_instID)
-    {
-        timeDisplacements[a_instID] += a_deltaTime;
-        if (timeDisplacements[a_instID] >= a_pathLength)
+        std::ifstream in(a_file);
+
+        int nrTranslations;
+        in >> nrTranslations;
+        translations.reserve(nrTranslations);
+
+        float tx, ty, tz;
+        for (int i = 0; i < nrTranslations; ++i)
         {
-            timeDisplacements[a_instID] -= a_pathLength;
-            ResetLocation(a_instID);
+            in >> tx >> ty >> tz;
+            translations.push_back(glm::vec3(tx, ty, tz));
         }
     }
 
-    void CreateVBO(float pathLength)
+    void ResetDisplacements(int a_instID)
     {
+        positionDisplacements[a_instID].x = (rand() / (float)RAND_MAX - 0.5f) * 6.f;
+        positionDisplacements[a_instID].y = (rand() / (float)RAND_MAX - 0.5f) * 6.f;
+        timeDisplacements[a_instID] -= pathLength;
+    }
+
+    void UpdateTimeDisplacements(int a_instID)
+    {
+        timeDisplacements[a_instID] += DELTA_TIME_SNOW;
+        if (timeDisplacements[a_instID] >= pathLength)
+        {
+            ResetDisplacements(a_instID);
+        }
+    }
+
+    void CreateVBO(Path a_path, const char* a_file)
+    {
+        ReadTranslations(a_file);
+        snowPath = a_path;
+        pathLength = a_path.length();
+
         std::array<glm::vec2, 3> coords{ GetCoords({ 0, 0 }) };
         int currIdx{ 0 };
         static GLfloat Vertices[6];
@@ -66,10 +99,10 @@ namespace Snow
             Indices[i] = i;
         }
 
-        for (int i = 0; i < SNOW_COUNT; ++i)
+        for (int instID = 0; instID < SNOW_COUNT; ++instID)
         {
-            ResetLocation(i);
-            timeDisplacements[i] = (rand() / (float)RAND_MAX) * pathLength;
+            ResetDisplacements(instID);
+            timeDisplacements[instID] = (rand() / (float)RAND_MAX) * pathLength;
         }
 
         glGenVertexArrays(1, &VaoId);
@@ -105,9 +138,8 @@ namespace Snow
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
     }
 
-    void UpdateTranslations(const Path& a_path, float a_deltaTime)
+    void UpdateTranslations()
     {
-        float pathLength{ a_path.length() };
         for (int instID = 0; instID < SNOW_COUNT; ++instID)
         {
             translationMat[instID] = glm::translate(
@@ -116,20 +148,23 @@ namespace Snow
                     positionDisplacements[instID].x,
                     positionDisplacements[instID].y,
                     0.0
-                ) + (a_path.interpolate(timeDisplacements[instID]))
+                ) + (snowPath.interpolate(timeDisplacements[instID]))
             );
-            UpdateTimeDisplacements(pathLength, a_deltaTime, instID);
+            UpdateTimeDisplacements(instID);
         }
         glBindBuffer(GL_ARRAY_BUFFER, VbTranslationMat);
         glBufferData(GL_ARRAY_BUFFER, sizeof(translationMat), translationMat, GL_DYNAMIC_DRAW);
     }
 
-    void Draw(glm::mat4 a_translation)
+    void Draw()
     {
-        Shaders::SetCircle(a_translation);
         glBindVertexArray(VaoId);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EboId);
-        glDrawElementsInstanced(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0, 35);
+
+        for (const glm::vec3& translation : translations) {
+            Shaders::SetCircle(glm::translate(glm::mat4(1.0f), translation));
+            glDrawElementsInstanced(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0, SNOW_COUNT);
+        }
     }
 
     void DestroyVBO()

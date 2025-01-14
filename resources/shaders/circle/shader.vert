@@ -54,11 +54,11 @@ mat4 rotateZ(float theta)
 
 void main()
 {
-    float instID = float(gl_InstanceID);
+    float instID = (float(gl_InstanceID) + time) * PI;
 
-    matrRot = rotateX((instID + time + 1) * PI / 10)
-            * rotateY(instID + time * PI / 6)
-            * rotateZ((time + 3 * instID * PI) / 2);
+    matrRot = rotateX(instID / 10)
+            * rotateY(instID / 6)
+            * rotateZ(3 * instID / 2);
 
     gl_Position = projectionShader * viewShader *
                   translateToLocation * in_Translation * matrRot *

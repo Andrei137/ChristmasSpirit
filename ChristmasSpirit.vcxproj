@@ -190,9 +190,6 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClCompile Include="src\helpers\shaders.cpp" />
     <ClCompile Include="src\helpers\textures.cpp" />
     <ClCompile Include="src\helpers\utils.cpp" />
-    <ClCompile Include="src\primitives\cone.cpp" />
-    <ClCompile Include="src\primitives\cylinder.cpp" />
-    <ClCompile Include="src\primitives\sphere.cpp" />
     <ClCompile Include="src\scene\mesh.cpp" />
     <ClCompile Include="src\scene\scene.cpp" />
     <ClCompile Include="src\scene\snow.cpp" />
@@ -502,9 +499,6 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClInclude Include="include\helpers\shaders.h" />
     <ClInclude Include="include\helpers\textures.h" />
     <ClInclude Include="include\helpers\utils.h" />
-    <ClInclude Include="include\primitives\cone.h" />
-    <ClInclude Include="include\primitives\cylinder.h" />
-    <ClInclude Include="include\primitives\sphere.h" />
     <ClInclude Include="include\scene\mesh.h" />
   	<ClInclude Include="include\scene\scene.h" />
     <ClInclude Include="include\scene\snow.h" />

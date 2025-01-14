@@ -25,10 +25,14 @@ namespace Utils
 		cameraVertical;
 
     void LoadTexture(const char* a_photoPath, GLuint& a_texture);
-    void ProcessNormalKeys(unsigned char a_key, int, int);
-    void ProcessSpecialKeys(int a_key, int, int);
-    void ReshapeWindow(GLint a_newWidth, GLint a_newHeight);
+
+    void SetUniformInt(GLuint a_ID, const char* a_name, int a_value);
+    void SetUniformMat(GLuint a_ID, const char* a_name, glm::mat4 a_mat);
 
     std::string DropFileExtension(const std::string& a_file);
     std::string FilePath(const std::string& a_type, const std::string& a_name);
+
+    void ProcessNormalKeys(unsigned char a_key, int, int);
+    void ProcessSpecialKeys(int a_key, int, int);
+    void ReshapeWindow(GLint a_newWidth, GLint a_newHeight);
 }

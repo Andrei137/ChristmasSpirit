@@ -47,30 +47,22 @@ namespace Shaders
         }
     }
 
-    void SetMVP(glm::mat4 a_view, glm::mat4 a_proj)
+    void SetView(glm::mat4 a_view)
     {
-        if (a_view != glm::mat4(0))
-        {
-            view = a_view;
-        }
-        if (a_proj != glm::mat4(0))
-        {
-            proj = a_proj;
-        }
+        view = a_view;
+    }
+
+    void SetProj(glm::mat4 a_proj)
+    {
+        proj = a_proj;
     }
 
     void SetShader(std::string a_name)
     {
         GLuint shaderID{ shaders[a_name] };
         glUseProgram(shaderID);
-        glUniformMatrix4fv(
-            glGetUniformLocation(shaderID, "projectionShader"),
-            1, GL_FALSE, &proj[0][0]
-        );
-        glUniformMatrix4fv(
-            glGetUniformLocation(shaderID, "viewShader"),
-            1, GL_FALSE, &view[0][0]
-        );
+        Utils::SetUniformMat(shaderID, "projectionShader", proj);
+        Utils::SetUniformMat(shaderID, "viewShader", view);
     }
 
     // API to change the current shader
@@ -89,20 +81,14 @@ namespace Shaders
     	SetShader("mesh_default");
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Textures::Get(a_texture_name));
-        glUniformMatrix4fv(
-            glGetUniformLocation(shaders["mesh_default"], "model2world"),
-            1, GL_FALSE, &a_tranformation[0][0]
-        );
-        glUniform1i(glGetUniformLocation(shaders["mesh_default"], "textureShader"), 0);
+        Utils::SetUniformMat(shaders["mesh_default"], "model2world", a_tranformation);
+        Utils::SetUniformInt(shaders["mesh_default"], "textureShader", 0);
     }
 
     void SetCircle(glm::mat4 a_translation)
     {
         SetShader("circle");
-        glUniform1f(glGetUniformLocation(shaders["circle"], "time"), glutGet(GLUT_ELAPSED_TIME) * 0.01);
-        glUniformMatrix4fv(
-            glGetUniformLocation(shaders["circle"], "translateToLocation"),
-            1, GL_FALSE, &a_translation[0][0]
-        );
+        Utils::SetUniformInt(shaders["circle"], "time", glutGet(GLUT_ELAPSED_TIME) * DELTA_TIME_SNOW);
+        Utils::SetUniformMat(shaders["circle"], "translateToLocation", a_translation);
     }
 }

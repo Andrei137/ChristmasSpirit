@@ -12,7 +12,7 @@ void Scene::loadScene(const char* a_file)
 {
 	clear();
 
-	std::ifstream in(SCENES_PATH + "/" + a_file);
+	std::ifstream in(a_file);
 	std::string mesh, texture;
 	float tx, ty, tz, rx, ry, rz, sx, sy, sz;
 	const float PI{ static_cast<float>(atan2(0, -1)) }, DEG2RAD{ PI / 180 };
@@ -43,9 +43,8 @@ void Scene::clear()
 
 void Scene::draw(const std::unordered_map<std::string, Mesh>& a_meshes)
 {
-	Shaders::SetMVP(
-		glm::lookAt(Utils::cameraPos, Utils::cameraPos + Utils::cameraOrientation, Utils::cameraVertical),
-		glm::infinitePerspective(FOV, GLfloat(Utils::width) / GLfloat(Utils::height), ZNEAR)
+	Shaders::SetView(
+		glm::lookAt(Utils::cameraPos, Utils::cameraPos + Utils::cameraOrientation, Utils::cameraVertical)
 	);
 
 	for (int i = 0; i < static_cast<int>(m_meshes.size()); ++i)

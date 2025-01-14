@@ -17,7 +17,8 @@ namespace Shaders
 
     void Create();
     void Destroy();
-    void SetMVP(glm::mat4 a_view, glm::mat4 a_proj);
+    void SetView(glm::mat4 a_view);
+    void SetProj(glm::mat4 a_proj);
     void SetShader(std::string a_name);
 
     // API to change the current shader
