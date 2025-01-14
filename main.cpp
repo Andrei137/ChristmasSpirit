@@ -24,7 +24,7 @@ using namespace Utils;
 
 /* Variables Section */
 float
-    sceneTime{ 0.0f };
+    sceneTime{ -2.0f };
 std::unordered_map<std::string, Mesh>
     meshMap;
 std::unordered_map<std::string, Path>

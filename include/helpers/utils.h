@@ -27,6 +27,7 @@ namespace Utils
     void LoadTexture(const char* a_photoPath, GLuint& a_texture);
 
     void SetUniformInt(GLuint a_ID, const char* a_name, int a_value);
+    void SetUniformFloat(GLuint a_ID, const char* a_name, float a_value);
     void SetUniformMat(GLuint a_ID, const char* a_name, glm::mat4 a_mat);
 
     std::string DropFileExtension(const std::string& a_file);

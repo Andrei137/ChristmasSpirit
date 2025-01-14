@@ -65,8 +65,8 @@ namespace Snow
 
     void ResetDisplacements(int a_instID)
     {
-        positionDisplacements[a_instID].x = (rand() / (float)RAND_MAX - 0.5f) * 6.f;
-        positionDisplacements[a_instID].y = (rand() / (float)RAND_MAX - 0.5f) * 6.f;
+        positionDisplacements[a_instID].x = (rand() / (float)RAND_MAX - 0.5f) * 9.f;
+        positionDisplacements[a_instID].y = (rand() / (float)RAND_MAX - 0.5f) * 9.f;
         timeDisplacements[a_instID] -= pathLength;
     }
 
@@ -162,7 +162,7 @@ namespace Snow
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EboId);
 
         for (const glm::vec3& translation : translations) {
-            Shaders::SetCircle(glm::translate(glm::mat4(1.0f), translation));
+            Shaders::SetSnow(glm::translate(glm::mat4(1.0f), translation));
             glDrawElementsInstanced(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0, SNOW_COUNT);
         }
     }

@@ -14,14 +14,14 @@ const glm::vec3
     VERT{ glm::vec3(0.0f, 0.0f, -1.0f) };
 
 const int
-    SNOW_COUNT{ 500 };
+    SNOW_COUNT{ 1000 };
 
 const float
     PI{ 3.141592f },
     ZNEAR{ 0.01f },
     FOV{ 30.0f },
     SQRT3{ static_cast<float>(sqrt(3)) },
-    SNOW_RADIUS{ 0.1f },
+    SNOW_RADIUS{ 0.031f },
     DELTA_TIME_SNOW{ 0.01f };
 
 const std::string

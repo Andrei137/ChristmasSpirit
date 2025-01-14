@@ -85,10 +85,10 @@ namespace Shaders
         Utils::SetUniformInt(shaders["mesh_default"], "textureShader", 0);
     }
 
-    void SetCircle(glm::mat4 a_translation)
+    void SetSnow(glm::mat4 a_translation)
     {
-        SetShader("circle");
-        Utils::SetUniformInt(shaders["circle"], "time", glutGet(GLUT_ELAPSED_TIME) * DELTA_TIME_SNOW);
-        Utils::SetUniformMat(shaders["circle"], "translateToLocation", a_translation);
+        SetShader("snow");
+        Utils::SetUniformFloat(shaders["snow"], "time", glutGet(GLUT_ELAPSED_TIME) * DELTA_TIME_SNOW);
+        Utils::SetUniformMat(shaders["snow"], "translateToLocation", a_translation);
     }
 }

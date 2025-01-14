@@ -50,6 +50,14 @@ namespace Utils
         );
     }
 
+    void SetUniformFloat(GLuint a_ID, const char* a_name, float a_value)
+    {
+        glUniform1f(
+            glGetUniformLocation(a_ID, a_name),
+            a_value
+        );
+    }
+
     void SetUniformMat(GLuint a_ID, const char* a_name, glm::mat4 a_mat)
     {
         glUniformMatrix4fv(

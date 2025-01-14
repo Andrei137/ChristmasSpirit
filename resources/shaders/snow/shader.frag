@@ -9,5 +9,5 @@ void main(void)
 {
     float p = ex_Pos.x * ex_Pos.x + ex_Pos.y * ex_Pos.y - 1;
     out_Color.xyz = ex_Color;
-    out_Color.w = float(p <= 0);
+    out_Color.w = float(p <= 0) * 0.75f;
 }
