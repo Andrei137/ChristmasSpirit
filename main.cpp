@@ -20,11 +20,8 @@
 #include "scene/snow.h"
 
 namespace fs = std::filesystem;
-using namespace Utils;
 
 /* Variables Section */
-float
-    sceneTime{ 62.0f };
 std::unordered_map<std::string, Mesh>
     meshMap;
 std::unordered_map<std::string, Path>
@@ -44,19 +41,19 @@ void Initialize()
         for (const auto& path : fs::directory_iterator(BEZIER_PATH))
         {
             assert(path.is_regular_file());
-            std::string name{ DropFileExtension(path.path().filename().string()) };
+            std::string name{ Utils::DropFileExtension(path.path().filename().string()) };
             futures.push_back(std::async(std::launch::async, [name, &pathMapMutex] {
-                Path data{ Path::readFromFile(FILE_PATH("path", name)) };
+                Path data{ Path::readFromFile(Utils::FILE_PATH("path", name)) };
                 std::lock_guard<std::mutex> lock(pathMapMutex);
                 pathMap[name] = std::move(data);
             }));
         }
         for (const auto& mesh : fs::directory_iterator(MESHES_PATH)) {
             assert(mesh.is_regular_file());
-            std::string name{ DropFileExtension(mesh.path().filename().string()) };
+            std::string name{ Utils::DropFileExtension(mesh.path().filename().string()) };
             futures.push_back(std::async(std::launch::async, [name, &meshMapMutex] {
                 Mesh meshData;
-                meshData.loadMesh(FILE_PATH("mesh", name));
+                meshData.loadMesh(Utils::FILE_PATH("mesh", name));
                 std::lock_guard<std::mutex> lock(meshMapMutex);
                 meshMap[name] = std::move(meshData);
             }));
@@ -75,8 +72,8 @@ void Initialize()
             glm::infinitePerspective(FOV, GLfloat(Utils::width) / GLfloat(Utils::height), ZNEAR)
         );
         Textures::Create();
-        Snow::CreateVBO(pathMap["snow"], FILE_PATH("scene", "snow"));
-        scene.loadScene(FILE_PATH("scene", "objects"));
+        Snow::CreateVBO(pathMap["snow"], Utils::FILE_PATH("scene", "snow"));
+        scene.loadScene(Utils::FILE_PATH("scene", "objects"));
     }
     catch (const fs::filesystem_error& e)
     {
@@ -93,14 +90,20 @@ void Cleanup()
 }
 
 /* Main Section */
+void Idle() {
+    glutPostRedisplay();
+}
+
 void DrawScene()
 {
-    Utils::cameraPos = pathMap["camera"].interpolate(sceneTime);
-    Utils::cameraOrientation = glm::normalize(pathMap["camera_orient"].interpolate(sceneTime));
+    Utils::UpdateCamera(
+        pathMap["camera"].interpolate(Utils::sceneTime),
+        glm::normalize(pathMap["camera_orient"].interpolate(Utils::sceneTime))
+    );
     Snow::Draw();
     Snow::UpdateTranslations();
     scene.draw(meshMap);
-    sceneTime += 0.01f;
+    Utils::UpdatePathTime();
 }
 
 void RenderScene()
@@ -109,7 +112,7 @@ void RenderScene()
     glEnable(GL_DEPTH_TEST);
 
     std::vector<std::function<void()>> scenes = { DrawScene };
-    scenes[Utils::demoIdx]();
+    scenes[static_cast<int>(scenes.size() - 1)]();
 
     glutSwapBuffers();
     glFlush();
@@ -120,18 +123,21 @@ int main(int argc, char* argv[])
     srand(static_cast<unsigned int>(time(0)));
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
-    glutInitWindowSize(static_cast<int>(winWidth), static_cast<int>(winHeight));
+    glutInitWindowSize(static_cast<int>(Utils::winWidth), static_cast<int>(Utils::winHeight));
     glutInitWindowPosition(POSX, POSY);
     glutCreateWindow(TITLE.c_str());
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glewInit();
     Initialize();
-    glutReshapeFunc(ReshapeWindow);
+    glutReshapeFunc(Utils::ReshapeWindow);
     glutDisplayFunc(RenderScene);
     glutIdleFunc(RenderScene);
-    glutKeyboardFunc(ProcessNormalKeys);
-    glutSpecialFunc(ProcessSpecialKeys);
+    glutIdleFunc(Idle);
+    glutKeyboardFunc(Utils::ProcessNormalKeys);
+    glutKeyboardUpFunc(Utils::ProcessKeyUp);
+    glutSpecialFunc(Utils::ProcessSpecialKeys);
+    glutSpecialUpFunc(Utils::ProcessSpecialKeyUp);
     glutCloseFunc(Cleanup);
     glutMainLoop();
     return 0;

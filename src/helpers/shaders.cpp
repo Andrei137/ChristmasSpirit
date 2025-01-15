@@ -61,8 +61,8 @@ namespace Shaders
     {
         GLuint shaderID{ shaders[a_name] };
         glUseProgram(shaderID);
-        Utils::SetUniformMat(shaderID, "projectionShader", proj);
-        Utils::SetUniformMat(shaderID, "viewShader", view);
+        Utils::SetUniform<glm::mat4>(shaderID, "projectionShader", proj);
+        Utils::SetUniform<glm::mat4>(shaderID, "viewShader", view);
     }
 
     // API to change the current shader
@@ -81,15 +81,15 @@ namespace Shaders
     	SetShader("mesh_default");
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Textures::Get(a_texture_name));
-        Utils::SetUniformMat(shaders["mesh_default"], "model2world", a_tranformation);
-        Utils::SetUniformInt(shaders["mesh_default"], "textureShader", 0);
+        Utils::SetUniform<glm::mat4>(shaders["mesh_default"], "model2world", a_tranformation);
+        Utils::SetUniform<int>(shaders["mesh_default"], "textureShader", 0);
     }
 
     void SetSnow(glm::mat4 a_translation)
     {
         SetShader("snow");
-        Utils::SetUniformFloat(shaders["snow"], "time", glutGet(GLUT_ELAPSED_TIME) * 0.005);
-        Utils::SetUniformFloat(shaders["snow"], "radius", SNOW_RADIUS);
-        Utils::SetUniformMat(shaders["snow"], "translateToLocation", a_translation);
+        Utils::SetUniform<float>(shaders["snow"], "time", glutGet(GLUT_ELAPSED_TIME) * 0.005);
+        Utils::SetUniform<float>(shaders["snow"], "radius", SNOW_RADIUS);
+        Utils::SetUniform<glm::mat4>(shaders["snow"], "translateToLocation", a_translation);
     }
 }

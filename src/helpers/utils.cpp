@@ -1,8 +1,10 @@
 #include "helpers/utils.h"
 #include "helpers/constants.h"
 #include "SOIL.h"
+#include <map>
 #include <stdlib.h>
 #include <GL/freeglut_std.h>
+#include "glm/gtc/matrix_transform.hpp"
 
 namespace Utils
 {
@@ -11,6 +13,7 @@ namespace Utils
         winHeight{ 720.0f };
 
     float
+        sceneTime{ PATH_TIME_START },
         width{ 800.0f },
         height{ 600.0f };
 
@@ -20,7 +23,10 @@ namespace Utils
 		cameraVertical{ glm::vec3(0.f, 0.f, -1.f) };
 
     int
-        demoIdx{ 0 };
+        sceneIdx{ 0 };
+
+    std::map<unsigned char, bool>
+        keyState;
 
     void LoadTexture(const char* a_photoPath, GLuint& a_texture)
     {
@@ -40,30 +46,6 @@ namespace Utils
 
         SOIL_free_image_data(image);
         glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-    void SetUniformInt(GLuint a_ID, const char* a_name, int a_value)
-    {
-        glUniform1i(
-            glGetUniformLocation(a_ID, a_name),
-            a_value
-        );
-    }
-
-    void SetUniformFloat(GLuint a_ID, const char* a_name, float a_value)
-    {
-        glUniform1f(
-            glGetUniformLocation(a_ID, a_name),
-            a_value
-        );
-    }
-
-    void SetUniformMat(GLuint a_ID, const char* a_name, glm::mat4 a_mat)
-    {
-        glUniformMatrix4fv(
-            glGetUniformLocation(a_ID, a_name),
-            1, GL_FALSE, &a_mat[0][0]
-        );
     }
 
     std::string DropFileExtension(const std::string& a_file)
@@ -102,11 +84,93 @@ namespace Utils
         return folder + "/" + a_name + extension;
     }
 
+    void UpdateCamera(glm::vec3 a_cameraPos, glm::vec3 a_cameraOrientation)
+    {
+        if (sceneIdx == 2) // free roam
+        {
+            if (keyState['w'] || keyState['W'])
+            {
+                cameraPos += cameraOrientation * 0.08f;
+            }
+            if (keyState['s'] || keyState['S'])
+            {
+                cameraPos -= cameraOrientation * 0.08f;
+            }
+            if (keyState['d'] || keyState['D'])
+            {
+                glm::vec4 aux = glm::rotate(glm::mat4(1.f), 0.01f, cameraVertical) * glm::vec4(cameraOrientation, 1);
+                cameraOrientation = glm::vec3(aux.x, aux.y, aux.z);
+            }
+            if (keyState['a'] || keyState['A'])
+            {
+                glm::vec4 aux = glm::rotate(glm::mat4(1.f), -0.01f, cameraVertical) * glm::vec4(cameraOrientation, 1);
+                cameraOrientation = glm::vec3(aux.x, aux.y, aux.z);
+            }
+            if (keyState['q'] || keyState['Q'])
+            {
+                auto rot = glm::rotate(glm::mat4(1.f), -0.01f, glm::cross(cameraVertical, cameraOrientation));
+                glm::vec4 aux = rot * glm::vec4(cameraOrientation, 1);
+                cameraOrientation = glm::vec3(aux.x, aux.y, aux.z);
+                aux = rot * glm::vec4(cameraVertical, 1);
+                cameraVertical = glm::vec3(aux.x, aux.y, aux.z);
+            }
+            if (keyState['e'] || keyState['E'])
+            {
+                auto rot = glm::rotate(glm::mat4(1.f), 0.01f, glm::cross(cameraVertical, cameraOrientation));
+                glm::vec4 aux = rot * glm::vec4(cameraOrientation, 1);
+                cameraOrientation = glm::vec3(aux.x, aux.y, aux.z);
+                aux = rot * glm::vec4(cameraVertical, 1);
+                cameraVertical = glm::vec3(aux.x, aux.y, aux.z);
+            }
+        }
+        else
+        {
+            cameraPos = a_cameraPos;
+            cameraOrientation = a_cameraOrientation;
+        }
+    }
+
+    void UpdatePathTime(const std::string& a_mode)
+    {
+        if (sceneIdx == 0 && a_mode == "auto")
+        {
+            sceneTime = std::min(sceneTime + PATH_TIME_INCREMENT * PATH_SPEED_AUTO, PATH_TIME_END);
+        }
+        else if (sceneIdx == 1)
+        {
+            float increment{ PATH_TIME_INCREMENT * PATH_SPEED_MANUAL };
+            if (a_mode == "manual_increment")
+            {
+                sceneTime = std::min(sceneTime + increment, PATH_TIME_END);
+            }
+            else if (a_mode == "manual_decrement")
+            {
+                sceneTime = std::max(sceneTime - increment, PATH_TIME_START);
+            }
+        }
+    }
+
     void ProcessNormalKeys(unsigned char a_key, int, int)
     {
-        if (a_key >= '1' && a_key <= '1')
+        if (a_key >= '1' && a_key <= '3')
 		{
-            demoIdx = (a_key - '0') - 1;
+            sceneIdx = (a_key - '0') - 1;
+        }
+        if (a_key == '+' || a_key == '=')
+        {
+            UpdatePathTime("manual_increment");
+        }
+        if (a_key == '-')
+        {
+            UpdatePathTime("manual_decrement");
+        }
+        if (a_key == 'r')
+        {
+            sceneTime = PATH_TIME_START;
+        }
+        if (sceneIdx == 2)
+        {
+            keyState[a_key] = true;
         }
         if (a_key == 27)
         {
@@ -114,18 +178,48 @@ namespace Utils
         }
     }
 
+    void ProcessKeyUp(unsigned char a_key, int, int)
+    {
+        keyState[a_key] = false;
+    }
+
     void ProcessSpecialKeys(int a_key, int, int)
     {
-        switch (a_key)
+        if (a_key == GLUT_KEY_UP)
         {
-            case GLUT_KEY_LEFT:
-                --demoIdx;
-                if (demoIdx < 0) demoIdx = 0;
-                break;
-            case GLUT_KEY_RIGHT:
-                ++demoIdx;
-                if (demoIdx > 0) demoIdx = 0;
-                break;
+            keyState['w'] = true;
+        }
+        if (a_key == GLUT_KEY_DOWN)
+        {
+            keyState['s'] = true;
+        }
+        if (a_key == GLUT_KEY_RIGHT)
+        {
+            keyState['d'] = true;
+        }
+        if (a_key == GLUT_KEY_LEFT)
+        {
+            keyState['a'] = true;
+        }
+    }
+
+    void ProcessSpecialKeyUp(int a_key, int, int)
+    {
+        if (a_key == GLUT_KEY_UP)
+        {
+            keyState['w'] = false;
+        }
+        if (a_key == GLUT_KEY_DOWN)
+        {
+            keyState['s'] = false;
+        }
+        if (a_key == GLUT_KEY_RIGHT)
+        {
+            keyState['d'] = false;
+        }
+        if (a_key == GLUT_KEY_LEFT)
+        {
+            keyState['a'] = false;
         }
     }
 

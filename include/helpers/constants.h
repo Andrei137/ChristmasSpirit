@@ -14,6 +14,8 @@ const glm::vec3
     VERT{ glm::vec3(0.0f, 0.0f, -1.0f) };
 
 const int
+    PATH_SPEED_AUTO{ 1 },
+    PATH_SPEED_MANUAL{ 10 },
     SNOW_COUNT{ 1000 };
 
 const float
@@ -22,10 +24,13 @@ const float
     FOV{ 30.0f },
     SQRT3{ static_cast<float>(sqrt(3)) },
     SNOW_RADIUS{ 0.031f },
-    DELTA_TIME_SNOW{ 0.01f };
+    DELTA_TIME_SNOW{ 0.01f },
+    PATH_TIME_START{ -1.5f },
+    PATH_TIME_END{ 55.0f },
+    PATH_TIME_INCREMENT{ 0.01f };
 
 const std::string
-    TITLE{ "ChristmasSpirit" },
+    TITLE{ "Christmas Spirit" },
     MESHES_PATH{ "resources/meshes" },
     BEZIER_PATH{ "resources/paths" },
     SCENES_PATH{ "resources/scenes" },
