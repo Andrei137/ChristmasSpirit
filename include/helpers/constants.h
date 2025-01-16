@@ -11,7 +11,10 @@ const GLint
 
 const glm::vec3
     REF{ glm::vec3(0.0f, 0.0f, 0.0f) },
-    VERT{ glm::vec3(0.0f, 0.0f, -1.0f) };
+    VERT{ glm::vec3(0.0f, 0.0f, -1.0f) },
+    CAMERA_POS_START{ glm::vec3(0.0f, 0.0f, 5.0f) },
+    CAMERA_ORIENTATION_START{ glm::vec3(1.0f, 1.0f, 0.f) },
+    CAMERA_VERTICAL_START{ glm::vec3(0.0f, 0.0f, -1.0f) };
 
 const int
     PATH_SPEED_AUTO{ 1 },

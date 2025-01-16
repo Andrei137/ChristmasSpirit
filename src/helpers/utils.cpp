@@ -18,15 +18,23 @@ namespace Utils
         height{ 600.0f };
 
 	glm::vec3
-		cameraPos{ glm::vec3(0.f, 0.f, 5.f) },
-		cameraOrientation{ glm::vec3(1.f, 0.f, 0.f) },
-		cameraVertical{ glm::vec3(0.f, 0.f, -1.f) };
+		cameraPos{ CAMERA_POS_START },
+		cameraOrientation{ CAMERA_ORIENTATION_START },
+		cameraVertical{ CAMERA_VERTICAL_START };
 
     int
         sceneIdx{ 0 };
 
     std::map<unsigned char, bool>
         keyState;
+
+    std::map<int, unsigned char>
+        arrowToKey{
+            { GLUT_KEY_UP, 'w' },
+            { GLUT_KEY_DOWN, 's' },
+            { GLUT_KEY_LEFT, 'a' },
+            { GLUT_KEY_RIGHT, 'd' }
+        };
 
     void LoadTexture(const char* a_photoPath, GLuint& a_texture)
     {
@@ -127,6 +135,7 @@ namespace Utils
         {
             cameraPos = a_cameraPos;
             cameraOrientation = a_cameraOrientation;
+            cameraVertical = CAMERA_VERTICAL_START;
         }
     }
 
@@ -185,42 +194,12 @@ namespace Utils
 
     void ProcessSpecialKeys(int a_key, int, int)
     {
-        if (a_key == GLUT_KEY_UP)
-        {
-            keyState['w'] = true;
-        }
-        if (a_key == GLUT_KEY_DOWN)
-        {
-            keyState['s'] = true;
-        }
-        if (a_key == GLUT_KEY_RIGHT)
-        {
-            keyState['d'] = true;
-        }
-        if (a_key == GLUT_KEY_LEFT)
-        {
-            keyState['a'] = true;
-        }
+        keyState[arrowToKey[a_key]] = true;
     }
 
     void ProcessSpecialKeyUp(int a_key, int, int)
     {
-        if (a_key == GLUT_KEY_UP)
-        {
-            keyState['w'] = false;
-        }
-        if (a_key == GLUT_KEY_DOWN)
-        {
-            keyState['s'] = false;
-        }
-        if (a_key == GLUT_KEY_RIGHT)
-        {
-            keyState['d'] = false;
-        }
-        if (a_key == GLUT_KEY_LEFT)
-        {
-            keyState['a'] = false;
-        }
+        keyState[arrowToKey[a_key]] = false;
     }
 
     void ReshapeWindow(GLint a_newWidth, GLint a_newHeight)
